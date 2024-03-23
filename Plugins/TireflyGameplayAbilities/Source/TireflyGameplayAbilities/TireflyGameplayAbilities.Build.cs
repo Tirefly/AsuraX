@@ -1,12 +1,12 @@
-// Copyright tzlFirefly. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
-public class FireflyGameplayAbilities : ModuleRules
+public class TireflyGameplayAbilities : ModuleRules
 {
-	public FireflyGameplayAbilities(ReadOnlyTargetRules Target) : base(Target)
+	public TireflyGameplayAbilities(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PublicDependencyModuleNames.AddRange(new string[] { "StructUtils" });
+		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
 		OptimizeCode = CodeOptimization.InShippingBuildsOnly;
 		
@@ -15,6 +15,7 @@ public class FireflyGameplayAbilities : ModuleRules
 				// ... add public include paths required here ...
 			}
 			);
+				
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
@@ -22,6 +23,7 @@ public class FireflyGameplayAbilities : ModuleRules
 			}
 			);
 			
+		
 		// Public Dependency Modules
 		PublicDependencyModuleNames.Add("Core");
 		PublicDependencyModuleNames.Add("CoreUObject");
@@ -44,6 +46,7 @@ public class FireflyGameplayAbilities : ModuleRules
 			PrivateDependencyModuleNames.Add("UnrealEd");
 			PrivateDependencyModuleNames.Add("KismetCompiler");
 		}
+		
 		
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]

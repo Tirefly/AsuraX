@@ -1,5 +1,5 @@
 // Copyright Tirefly. All Rights Reserved.
 
 
-#include "Framework/Game/AsuraGameMode.h"
+#include "Framework/Game/AsuraGameInstance.h"
 

@@ -1,4 +1,4 @@
-// Copyright tzlFirefly. All Rights Reserved.
+// Copyright Tirefly. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -24,6 +24,7 @@ public class AsuraX : ModuleRules
 		PrivateDependencyModuleNames.Add("EnhancedInput");
 		PrivateDependencyModuleNames.Add("StructUtils");
 		PrivateDependencyModuleNames.Add("Niagara");
+		PrivateDependencyModuleNames.Add("TireflyGameplayAbilities");
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

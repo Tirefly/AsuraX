@@ -1,13 +1,17 @@
-// Copyright tzlFirefly. All Rights Reserved.
+// Copyright Tirefly. All Rights Reserved.
 
 
 #include "Framework/Character/AsuraBaseCharacter.h"
 
+#include "TireflyAbilitySystemComponent.h"
+
+
 // Sets default values
-AAsuraBaseCharacter::AAsuraBaseCharacter()
+AAsuraBaseCharacter::AAsuraBaseCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+ 	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 }
 
@@ -18,17 +22,12 @@ void AAsuraBaseCharacter::BeginPlay()
 	
 }
 
-// Called every frame
-void AAsuraBaseCharacter::Tick(float DeltaTime)
+UAbilitySystemComponent* AAsuraBaseCharacter::GetAbilitySystemComponent() const
 {
-	Super::Tick(DeltaTime);
-
+	return AbilitySystem;
 }
 
-// Called to bind functionality to input
-void AAsuraBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+UTireflyAbilitySystemComponent* AAsuraBaseCharacter::GetTireflyAbilitySystemComponent() const
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	return AbilitySystem;
 }
-
