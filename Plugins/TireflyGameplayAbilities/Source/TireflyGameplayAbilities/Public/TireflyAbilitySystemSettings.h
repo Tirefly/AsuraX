@@ -46,7 +46,7 @@ protected:
 public:
 	// 属性的范围设置
 	UPROPERTY(Config, EditAnywhere, Category = "Gameplay Attribute")
-	TMap<FGameplayAttribute, FTireflyAttributeRangeSetting> AttributeRangeSettings;
+	TArray<FTireflyAttributeRangeSetting> AttributeRangeSettingList;
 
 #pragma endregion
 };

@@ -34,7 +34,21 @@ bool UTireflyAbilitySystemLibrary::GetAttributeValueInRange(const UAbilitySystem
 		return false;
 	}
 
-	const FTireflyAttributeRangeSetting* AttributeRangeSetting = SettingsGAS->AttributeRangeSettings.Find(Attribute);
+	auto FindAttributeRangeSetting = [SettingsGAS, Attribute]()
+	{
+		FTireflyAttributeRangeSetting* OutSetting = nullptr;
+		for (const FTireflyAttributeRangeSetting& Setting : SettingsGAS->AttributeRangeSettingList)
+		{
+			if (Setting.AttributeType == Attribute)
+			{
+				*OutSetting = Setting;
+			}
+		}
+
+		return OutSetting;
+	};
+
+	const FTireflyAttributeRangeSetting* AttributeRangeSetting = FindAttributeRangeSetting();
 	if (!AttributeRangeSetting)
 	{
 		return false;
