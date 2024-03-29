@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
-#include "GameplayAttribute/TireflyAttributeRangeSetting.h"
+#include "GameplayTagContainer.h"
+#include "GameplayAttribute/TireflyAttributeRangeConfig.h"
 #include "TireflyAbilitySystemSettings.generated.h"
 
 /**
@@ -41,12 +42,27 @@ protected:
 
 #pragma endregion
 
+	
 #pragma region GameplayAttribute_RangeSetting
 
 public:
 	// 属性的范围设置
 	UPROPERTY(Config, EditAnywhere, Category = "Gameplay Attribute")
-	TArray<FTireflyAttributeRangeSetting> AttributeRangeSettingList;
+	TMap<FGameplayAttribute, FTireflyAttributeRangeConfig> AttributeRangeConfigList;
+
+#pragma endregion
+
+
+#pragma region GameplayEffect_SetByCaller
+
+public:
+	// 通用的GameplayEffect持续时间SetByCaller
+	UPROPERTY(Config, EditAnywhere, Category = "Gameplay Effect")
+	FGameplayTag GenericDurationSetByCallerTag;
+
+	// GameplayEffect中属性对应的SetByCallerTag，帮助开发者更快速的配置GameplayEffect的SetByCaller类属性修改器
+	UPROPERTY(Config, EditAnywhere, Category = "Gameplay Effect")
+	TMap<FGameplayAttribute, FGameplayTag> GenericSetByCallerTagList;
 
 #pragma endregion
 };

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
-#include "TireflyAttributeRangeSetting.generated.h"
+#include "TireflyAttributeRangeConfig.generated.h"
 
 // 定义属性范围类型的美剧
 UENUM(BlueprintType)
@@ -17,15 +17,11 @@ enum class ETireflyAttributeRangeType : uint8
 
 // 定义一个游戏性属性的数值范围设置的结构体
 USTRUCT()
-struct FTireflyAttributeRangeSetting
+struct FTireflyAttributeRangeConfig
 {
 	GENERATED_BODY()
 
 public:
-	// 属性最小值的范围类型
-	UPROPERTY(EditDefaultsOnly)
-	FGameplayAttribute AttributeType = FGameplayAttribute();
-	
 	// 属性最小值的范围类型
 	UPROPERTY(EditDefaultsOnly)
 	ETireflyAttributeRangeType MinValueType = ETireflyAttributeRangeType::None;
@@ -49,24 +45,4 @@ public:
 	// 最大值类型为属性时，属性拥有者的指定类型属性值作为属性的范围最大值
 	UPROPERTY(EditDefaultsOnly, Meta = (EditCondition = "MaxValueType == ETireflyAttributeRangeType::Attribute", EditConditionHides))
 	FGameplayAttribute MaxAttribute = FGameplayAttribute();
-
-	FTireflyAttributeRangeSetting()
-	{}
-
-	FTireflyAttributeRangeSetting(const FGameplayAttribute& InAttribute)
-		: AttributeType(InAttribute)
-	{}
-
-	friend uint32 GetTypeHash(const FTireflyAttributeRangeSetting& InSetting)
-	{
-		uint32 Hash = 0;
-		Hash = HashCombine(Hash, GetTypeHash(InSetting.AttributeType));
-
-		return Hash;
-	}
-
-	bool operator==(const FTireflyAttributeRangeSetting& Other) const
-	{
-		return AttributeType == Other.AttributeType;
-	}
 };
