@@ -1,6 +1,6 @@
 // Copyright Tirefly. All Rights Reserved.
 
-#include "TireflyK2Node_SwitchGameplayAttribute.h"
+#include "BlueprintGraph/TireflyK2Node_SwitchGameplayAttribute.h"
 
 #include "TireflyAbilitySystemLibrary.h"
 #include "BlueprintActionDatabaseRegistrar.h"

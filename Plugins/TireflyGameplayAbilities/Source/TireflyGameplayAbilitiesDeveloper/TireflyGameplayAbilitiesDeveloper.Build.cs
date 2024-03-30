@@ -38,6 +38,7 @@ public class TireflyGameplayAbilitiesDeveloper : ModuleRules
         PrivateDependencyModuleNames.Add("TireflyGameplayAbilities");
         PrivateDependencyModuleNames.Add("BlueprintGraph");
         PrivateDependencyModuleNames.Add("UnrealEd");
+        PrivateDependencyModuleNames.Add("GraphEditor");
 
 
         DynamicallyLoadedModuleNames.AddRange(

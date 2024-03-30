@@ -39,5 +39,8 @@ public:
 	static bool GetAttributeValueInRange(const UAbilitySystemComponent* ASC, const FGameplayAttribute& Attribute
 		, float ValueToClamp, float& NewValue, float& MinValue, float& MaxValue);
 
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	static void PinMetaDataSample(UPARAM(meta = (GetParamOptions = "Tirefly")) FName AttributeName) {}
+
 #pragma endregion
 };
