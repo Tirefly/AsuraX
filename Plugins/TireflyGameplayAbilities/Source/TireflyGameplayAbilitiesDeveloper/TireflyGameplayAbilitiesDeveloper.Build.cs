@@ -26,19 +26,18 @@ public class TireflyGameplayAbilitiesDeveloper : ModuleRules
 
         // Public Dependency Modules
         PublicDependencyModuleNames.Add("Core");
-        PublicDependencyModuleNames.Add("CoreUObject");
-        PublicDependencyModuleNames.Add("Engine");
-        PublicDependencyModuleNames.Add("Slate");
-        PublicDependencyModuleNames.Add("SlateCore");
-        PublicDependencyModuleNames.Add("NetCore");
-
+        
 
         // Private Dependency Modules
+        PrivateDependencyModuleNames.Add("CoreUObject");
+        PrivateDependencyModuleNames.Add("Engine");
+        PrivateDependencyModuleNames.Add("Slate");
+        PrivateDependencyModuleNames.Add("SlateCore");
+        PrivateDependencyModuleNames.Add("NetCore");
         PrivateDependencyModuleNames.Add("GameplayAbilities");
         PrivateDependencyModuleNames.Add("TireflyGameplayAbilities");
         PrivateDependencyModuleNames.Add("BlueprintGraph");
         PrivateDependencyModuleNames.Add("UnrealEd");
-        PrivateDependencyModuleNames.Add("GraphEditor");
 
 
         DynamicallyLoadedModuleNames.AddRange(

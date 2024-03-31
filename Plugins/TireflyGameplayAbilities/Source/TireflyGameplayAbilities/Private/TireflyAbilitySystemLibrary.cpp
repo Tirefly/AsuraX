@@ -20,11 +20,6 @@ UTireflyAbilitySystemComponent* UTireflyAbilitySystemLibrary::GetTireflyAbilityS
 	return Cast<UTireflyAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor));
 }
 
-bool UTireflyAbilitySystemLibrary::NotEqual_AttributeAttribute(FGameplayAttribute A, FString B)
-{
-	return A.GetName() != B;                                                           
-}
-
 bool UTireflyAbilitySystemLibrary::GetAttributeValueInRange(const UAbilitySystemComponent* ASC,
 	const FGameplayAttribute& Attribute, float ValueToClamp, float& NewValue, float& MinValue, float& MaxValue)
 {

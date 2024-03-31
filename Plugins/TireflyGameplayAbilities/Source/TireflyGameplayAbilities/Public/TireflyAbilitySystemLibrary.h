@@ -32,15 +32,12 @@ public:
 public:
 	// 检查游戏属性的名称和字符串是否不相等，用于实现“Switch on Gameplay Attribute”节点
 	UFUNCTION(BlueprintPure, Category = PinOptions, meta = (BlueprintInternalUseOnly = "TRUE"))
-	static bool NotEqual_AttributeAttribute(FGameplayAttribute A, FString B);
+	static bool NotEqual_AttributeAttribute(FGameplayAttribute A, FString B) { return A.GetName() != B; }
 
 	// 获取属性被应用修改后在范围设置内的新的当前值，以及最小范围值和最大范围值
 	UFUNCTION(BlueprintPure, Category = "Ability|Attribute")
 	static bool GetAttributeValueInRange(const UAbilitySystemComponent* ASC, const FGameplayAttribute& Attribute
 		, float ValueToClamp, float& NewValue, float& MinValue, float& MaxValue);
-
-	UFUNCTION(BlueprintCallable, Category = "Ability")
-	static void PinMetaDataSample(UPARAM(meta = (GetParamOptions = "Tirefly")) FName AttributeName) {}
 
 #pragma endregion
 };

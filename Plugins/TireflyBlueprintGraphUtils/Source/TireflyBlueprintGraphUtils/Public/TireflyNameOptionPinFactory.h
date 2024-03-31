@@ -6,9 +6,11 @@
 #include "EdGraphUtilities.h"
 #include "Templates/SharedPointer.h"
 
+
 class SGraphPin;
 
-class TIREFLYGAMEPLAYABILITIESDEVELOPER_API FTireflyNameOptionPinFactory: public FGraphPanelPinFactory
+
+class TIREFLYBLUEPRINTGRAPHUTILS_API FTireflyNameOptionPinFactory: public FGraphPanelPinFactory
 {
 	virtual TSharedPtr<class SGraphPin> CreatePin(class UEdGraphPin* InPin) const override;
 };
