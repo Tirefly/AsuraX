@@ -7,7 +7,7 @@
 #include "TireflyGameplayAbility.generated.h"
 
 /**
- * 
+ * 扩展了一些数据驱动的功能支持的GameplayAbility
  */
 UCLASS()
 class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbility : public UGameplayAbility
