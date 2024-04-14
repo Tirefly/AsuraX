@@ -48,7 +48,7 @@ void UTireflyAttributeSet::InitFromDataTableRow(const UDataTable* DataTable, FNa
 {
 	if (!IsValid(DataTable))
 	{
-		UE_LOG(LogAbilitySystem, Warning, TEXT("UFireflyAttributeSet::InitFromCustomDataTable data table to initialize AttributeSet %s of %s is invalid.")
+		UE_LOG(LogAbilitySystem, Warning, TEXT("UTireflyAttributeSet::InitFromCustomDataTable data table to initialize AttributeSet %s of %s is invalid.")
 			, *GetClass()->GetName()
 			, *(GetOwningActor() ? GetOwningActor()->GetName() : TEXT("NONE")));
 		return;
@@ -57,14 +57,14 @@ void UTireflyAttributeSet::InitFromDataTableRow(const UDataTable* DataTable, FNa
 	const UScriptStruct* StructType = DataTable->GetRowStruct();
 	if (!StructType)
 	{
-		UE_LOG(LogAbilitySystem, Warning, TEXT("UFireflyAttributeSet::InitFromCustomDataTable DataTable %s has an invalid row struct."), *DataTable->GetPathName());
+		UE_LOG(LogAbilitySystem, Warning, TEXT("UTireflyAttributeSet::InitFromCustomDataTable DataTable %s has an invalid row struct."), *DataTable->GetPathName());
 		return;
 	}
 
 	const uint8* RowData = DataTable->FindRowUnchecked(RowName);
 	if (!RowData)
 	{
-		UE_LOG(LogAbilitySystem, Warning, TEXT("UFireflyAttributeSet::InitFromCustomDataTable DataTable %s has no row named as %s.")
+		UE_LOG(LogAbilitySystem, Warning, TEXT("UTireflyAttributeSet::InitFromCustomDataTable DataTable %s has no row named as %s.")
 			, *DataTable->GetPathName()
 			, *RowName.ToString());
 		return;

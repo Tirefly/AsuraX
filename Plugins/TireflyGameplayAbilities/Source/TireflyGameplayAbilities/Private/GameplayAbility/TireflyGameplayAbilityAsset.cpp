@@ -3,8 +3,6 @@
 
 #include "GameplayAbility/TireflyGameplayAbilityAsset.h"
 
-#include "GameplayAbility/TireflyGameplayAbilityParameter.h"
-
 
 const FPrimaryAssetType UTireflyGameplayAbilityAsset::GameplayAbilityAsset = TEXT("GameplayAbilityAsset");
 

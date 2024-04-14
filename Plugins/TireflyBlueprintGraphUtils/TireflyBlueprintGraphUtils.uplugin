@@ -17,8 +17,8 @@
 	"Modules": [
 		{
 			"Name": "TireflyBlueprintGraphUtils",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"Type": "Editor",
+			"LoadingPhase": "PreDefault"
 		}
 	]
 }

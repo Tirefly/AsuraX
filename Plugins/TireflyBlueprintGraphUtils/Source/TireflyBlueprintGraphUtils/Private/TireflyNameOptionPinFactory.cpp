@@ -68,10 +68,10 @@ TSharedPtr<SGraphPin> FTireflyNameOptionPinFactory::CreatePin(UEdGraphPin* InPin
 		return nullptr;
 	}
 
-    // 执行函数，并处理返回的选项名
+	// 执行函数，并处理返回的选项名
+	TArray<TSharedPtr<FName>> OutOptions;
 	TArray<FName> OptionNames;
 	OwningObject->ProcessEvent(FuncToExec, &OptionNames);
-	TArray<TSharedPtr<FName>> OutOptions;
 	for (const FName& OptionName : OptionNames)
 	{
 		OutOptions.Add(MakeShareable(new FName(OptionName)));
