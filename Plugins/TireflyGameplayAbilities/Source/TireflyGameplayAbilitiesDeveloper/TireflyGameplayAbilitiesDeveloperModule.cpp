@@ -2,6 +2,8 @@
 
 #include "TireflyGameplayAbilitiesDeveloperModule.h"
 
+#include "BlueprintGraph/TireflyAbilityParameterNodePinFactory.h"
+
 
 #define LOCTEXT_NAMESPACE "FTireflyGameplayAbilitiesDeveloperModule"
 
@@ -9,6 +11,9 @@
 void FTireflyGameplayAbilitiesDeveloperModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+
+	TSharedPtr<FTireflyAbilityParameterNodePinFactory> TireflyAbilityParameterNodePinFactory = MakeShareable(new FTireflyAbilityParameterNodePinFactory());
+	FEdGraphUtilities::RegisterVisualPinFactory(TireflyAbilityParameterNodePinFactory);
 }
 
 void FTireflyGameplayAbilitiesDeveloperModule::ShutdownModule()

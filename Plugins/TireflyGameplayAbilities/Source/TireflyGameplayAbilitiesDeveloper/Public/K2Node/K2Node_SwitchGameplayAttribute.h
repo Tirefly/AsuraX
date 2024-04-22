@@ -6,20 +6,20 @@
 #include "K2Node_Switch.h"
 #include "EdGraph/EdGraphPin.h"
 #include "AttributeSet.h"
-#include "TireflyK2Node_SwitchGameplayAttribute.generated.h"
+#include "K2Node_SwitchGameplayAttribute.generated.h"
 
 
 // Switch on Gameplay Attribute node
 // 游戏属性开关节点
 UCLASS(MinimalAPI)
-class UTireflyK2Node_SwitchGameplayAttribute : public UK2Node_Switch
+class UK2Node_SwitchGameplayAttribute : public UK2Node_Switch
 {
 	GENERATED_BODY()
 
 #pragma region K2Node_Switch
 
 public:
-	UTireflyK2Node_SwitchGameplayAttribute(const FObjectInitializer& ObjectInitializer);
+	UK2Node_SwitchGameplayAttribute(const FObjectInitializer& ObjectInitializer);
 
 	// 向开关节点添加一个新的执行引脚
 	// Adds a new execution pin to a switch node

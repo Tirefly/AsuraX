@@ -37,6 +37,8 @@ public class TireflyGameplayAbilitiesDeveloper : ModuleRules
         PrivateDependencyModuleNames.Add("GameplayAbilities");
         PrivateDependencyModuleNames.Add("TireflyGameplayAbilities");
         PrivateDependencyModuleNames.Add("BlueprintGraph");
+        PrivateDependencyModuleNames.Add("KismetCompiler");
+        PrivateDependencyModuleNames.Add("GraphEditor");
         PrivateDependencyModuleNames.Add("UnrealEd");
 
 
