@@ -7,6 +7,9 @@
 #include "GameplayEffectTypes.h"
 #include "TireflyAbilitySystemLibrary.generated.h"
 
+class UTireflyGameplayAbilityAsset;
+class UTireflyGameplayAbility;
+class UTireflyGameplayAbilityParameter;
 class UTireflyAbilitySystemComponent;
 
 /**
@@ -23,6 +26,52 @@ public:
 	// 尝试在Actor上找到一个TireflyAbilitySystemComponent
 	UFUNCTION(BlueprintPure, Category = Ability)
 	static UTireflyAbilitySystemComponent* GetTireflyAbilitySystemComponent(const AActor* Actor);
+
+#pragma endregion
+
+
+#pragma region GameplayAbility
+
+public:
+	// 根据AbilityRef获取指定的AbilityAsset参数（纯函数）
+	UFUNCTION(BlueprintPure, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityClassPure(TSubclassOf<UTireflyGameplayAbility> AbilityClass, FName Parameter, bool& Success);
+
+	// 根据AbilityRef获取指定的AbilityAsset参数（执行函数）
+	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityClass(TSubclassOf<UTireflyGameplayAbility> AbilityClass, FName Parameter, bool& Success);
+	
+	// 根据AbilityRef获取指定的AbilityAsset参数（纯函数）
+	UFUNCTION(BlueprintPure, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityRefPure(UTireflyGameplayAbility* AbilityRef, FName Parameter, bool& Success);
+
+	// 根据AbilityRef获取指定的AbilityAsset参数（执行函数）
+	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityRef(UTireflyGameplayAbility* AbilityRef, FName Parameter, bool& Success);
+
+	// 根据AbilityID获取指定的AbilityAsset参数（纯函数）
+	UFUNCTION(BlueprintPure, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityIdPure(FName AbilityId, FName Parameter, bool& Success);
+
+	// 根据AbilityID获取指定的AbilityAsset参数（执行函数）
+	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityId(FName AbilityId, FName Parameter, bool& Success);
+
+	// 根据AssetRef获取指定的AbilityAsset参数（纯函数）
+	UFUNCTION(BlueprintPure, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAssetRefPure(UTireflyGameplayAbilityAsset* AssetRef, FName Parameter, bool& Success);
+
+	// 根据AssetRef获取指定的AbilityAsset参数（执行函数）
+	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAssetRef(UTireflyGameplayAbilityAsset* AssetRef, FName Parameter, bool& Success);
+
+	// 根据AssetPak获取指定的AbilityAsset参数（纯函数）
+	UFUNCTION(BlueprintPure, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAssetPakPure(FString AssetPak, FName Parameter, bool& Success);
+
+	// 根据AssetPak获取指定的AbilityAsset参数（执行函数）
+	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly, Category = "Ability")
+	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAssetPak(FString AssetPak, FName Parameter, bool& Success);
 
 #pragma endregion
 

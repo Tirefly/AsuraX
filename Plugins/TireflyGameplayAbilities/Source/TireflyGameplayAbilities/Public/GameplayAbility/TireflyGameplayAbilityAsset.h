@@ -29,9 +29,9 @@ public:
 	// 数据资产类型：能力资产
 	static const FPrimaryAssetType GameplayAbilityAsset;
 
-	// 能力的唯一标识ID
+	// 能力的唯一标识Id
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameplayAbilityData)
-	FName AbilityID = NAME_None;
+	FName AbilityId = NAME_None;
 
 #pragma endregion
 

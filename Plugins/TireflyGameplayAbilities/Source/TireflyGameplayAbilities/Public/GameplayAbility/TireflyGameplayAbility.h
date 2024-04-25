@@ -48,7 +48,7 @@ public:
 protected:
 	// 能力的唯一标识
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Ability)
-	FName AbilityID;
+	FName AbilityId;
 
 	// 能力的数据资产路径，用于Debug确认能力是否绑定了能力数据资产
 	UPROPERTY(VisibleAnywhere, Category = Ability)

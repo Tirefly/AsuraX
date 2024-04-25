@@ -14,7 +14,7 @@ UTireflyGameplayAbilityAsset::UTireflyGameplayAbilityAsset(const FObjectInitiali
 
 FPrimaryAssetId UTireflyGameplayAbilityAsset::GetPrimaryAssetId() const
 {
-	return FPrimaryAssetId(GameplayAbilityAsset, AbilityID);
+	return FPrimaryAssetId(GameplayAbilityAsset, AbilityId);
 }
 
 void UTireflyGameplayAbilityAsset::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

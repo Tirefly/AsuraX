@@ -18,7 +18,7 @@ void UTireflyGameplayAbility::PostEditChangeProperty(FPropertyChangedEvent& Prop
 
 	if (PropertyChangedEvent.Property && PropertyChangedEvent.Property->GetName() == "AbilityID")
 	{
-		if (AbilityID == NAME_None)
+		if (AbilityId == NAME_None)
 		{
 			AbilityAsset = nullptr;
 			AbilityAssetPath.Empty();
@@ -27,7 +27,7 @@ void UTireflyGameplayAbility::PostEditChangeProperty(FPropertyChangedEvent& Prop
 		{
 			const UAssetManager& AssetManager = UAssetManager::Get();
 			AbilityAsset = AssetManager.GetPrimaryAssetObject<UTireflyGameplayAbilityAsset>(
-				FPrimaryAssetId(UTireflyGameplayAbilityAsset::GameplayAbilityAsset, AbilityID));
+				FPrimaryAssetId(UTireflyGameplayAbilityAsset::GameplayAbilityAsset, AbilityId));
 			if (AbilityAsset)
 			{
 				AbilityAssetPath = AbilityAsset.GetPathName();

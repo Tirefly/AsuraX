@@ -10,6 +10,7 @@
 UENUM(BlueprintType)
 enum class ETireflyAbilityAssetSource
 {
+	AbilityClass		UMETA(ToolTip = "通过GameplayAbility的类加载AbilityAsset"),
 	AbilityRef			UMETA(ToolTip = "获取当前TireflyGameplayAbility蓝图类中指定的AbilityAsset"),
 	AbilityId			UMETA(ToolTip = "通过GameplayAbility的资产Id加载AbilityAsset"),
 	AssetRef			UMETA(ToolTip = "直接设置AbilityAsset的硬引用"),
@@ -50,6 +51,8 @@ public:
 	// 覆写来处理节点的属性更改
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
+	virtual void ExpandNode(FKismetCompilerContext& CompilerContext, UEdGraph* SourceGraph) override;
+
 protected:
 	// 设置该节点是否是纯节点
 	UPROPERTY(EditAnywhere, Category = "Node Options")
@@ -74,8 +77,9 @@ public:
 	 */
 	virtual void ReallocatePinsDuringReconstruction(TArray<UEdGraphPin*>& OldPins) override;
 
+	// 引脚默认值更改时进行的处理
 	virtual void PinDefaultValueChanged(UEdGraphPin* Pin) override;
-	
+	// 引脚连接更改时进行的处理
 	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
 
 	// 创建执行输入引脚
@@ -91,9 +95,13 @@ public:
 	// 创建结果输出引脚
 	void CreateResultPin(UClass* ResultType = nullptr, const FString& PinFriendlyName = FString());
 
+	// 重新创建变体结果输出引脚
 	void RecreateVariantPins();
+	// 内部使用的重新创建变体结果输出引脚
 	void RecreateVariantPinsInternal(const UTireflyGameplayAbilityAsset* Asset, const FName& Parameter);
 
+	// 获取执行输入引脚
+	UEdGraphPin* GetExecInputPin() const;
 	// 获取执行输出引脚
 	UEdGraphPin* GetExecOutputPin() const;
 	// 获取能力资产来源引脚
