@@ -41,14 +41,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly, Category = "Ability")
 	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityClass(TSubclassOf<UTireflyGameplayAbility> AbilityClass, FName Parameter, bool& Success);
 	
-	// 根据AbilityRef获取指定的AbilityAsset参数（纯函数）
-	UFUNCTION(BlueprintPure, BlueprintInternalUseOnly, Category = "Ability")
-	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityRefPure(UTireflyGameplayAbility* AbilityRef, FName Parameter, bool& Success);
-
-	// 根据AbilityRef获取指定的AbilityAsset参数（执行函数）
-	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly, Category = "Ability")
-	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityRef(UTireflyGameplayAbility* AbilityRef, FName Parameter, bool& Success);
-
 	// 根据AbilityID获取指定的AbilityAsset参数（纯函数）
 	UFUNCTION(BlueprintPure, BlueprintInternalUseOnly, Category = "Ability")
 	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityIdPure(FName AbilityId, FName Parameter, bool& Success);

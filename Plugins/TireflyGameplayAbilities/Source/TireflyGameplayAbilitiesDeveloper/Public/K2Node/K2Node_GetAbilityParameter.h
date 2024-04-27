@@ -11,7 +11,6 @@ UENUM(BlueprintType)
 enum class ETireflyAbilityAssetSource
 {
 	AbilityClass		UMETA(ToolTip = "通过GameplayAbility的类加载AbilityAsset"),
-	AbilityRef			UMETA(ToolTip = "获取当前TireflyGameplayAbility蓝图类中指定的AbilityAsset"),
 	AbilityId			UMETA(ToolTip = "通过GameplayAbility的资产Id加载AbilityAsset"),
 	AssetRef			UMETA(ToolTip = "直接设置AbilityAsset的硬引用"),
 	AssetPak			UMETA(ToolTip = "通过AbilityAsset的PackageName获取AbilityAsset"),
@@ -60,7 +59,7 @@ protected:
 
 	// 节点要使用的能力资产来源
 	UPROPERTY(EditAnywhere, Category = "Node Options")
-	ETireflyAbilityAssetSource AbilityAssetSource = ETireflyAbilityAssetSource::AbilityRef;
+	ETireflyAbilityAssetSource AbilityAssetSource = ETireflyAbilityAssetSource::AbilityClass;
 	
 #pragma endregion
 
@@ -115,6 +114,10 @@ public:
 
 	// 根据能力资产来源引脚获取能力资产
 	UTireflyGameplayAbilityAsset* GetAbilityAsset(UEdGraphPin* Pin = nullptr) const;
+
+protected:
+	UPROPERTY()
+	UClass* ResultPinType = nullptr;
 
 #pragma endregion
 };

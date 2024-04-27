@@ -43,26 +43,6 @@ UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamO
 	return OutParameter;
 }
 
-UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamOfAbilityRefPure(
-	UTireflyGameplayAbility* AbilityRef, FName Parameter, bool& Success)
-{
-	return GetAbilityParamOfAbilityRef(AbilityRef, Parameter, Success);
-}
-
-UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamOfAbilityRef(
-	UTireflyGameplayAbility* AbilityRef, FName Parameter, bool& Success)
-{
-	if (!AbilityRef)
-	{
-		Success = false;
-		return nullptr;
-	}
-	
-	UTireflyGameplayAbilityParameter* OutParameter =  AbilityRef->GetAbilityAssetParameter(Parameter);
-	Success = OutParameter != nullptr ? true : false;
-	return OutParameter;
-}
-
 UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamOfAbilityIdPure(FName AbilityId,
 	FName Parameter, bool& Success)
 {
