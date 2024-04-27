@@ -8,7 +8,7 @@
 
 
 UENUM(BlueprintType)
-enum class ETireflyAbilityAssetSource
+enum class ETireflyAbilityAssetSource : uint8
 {
 	AbilityClass		UMETA(ToolTip = "通过GameplayAbility的类加载AbilityAsset"),
 	AbilityId			UMETA(ToolTip = "通过GameplayAbility的资产Id加载AbilityAsset"),
