@@ -19,8 +19,8 @@ public:
 	TSubclassOf<AActor> ActorClass;
 
 	// Actor生成时依据的源
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (GetOptions = "GetActorSpawnSourceOptions"))
-	FName SpawnSource = FName("Caster");
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	ETireflyAbilityParamSourceType SpawnSource = ETireflyAbilityParamSourceType::Caster;
 
 	// Actor生成时相对于源的偏移
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -43,9 +43,6 @@ public:
 	TArray<class UTireflyAbilityParamDetail_ActorSpawn*> SpawnDetails;
 
 public:
-	UFUNCTION()
-	static TArray<FName> GetActorSpawnSourceOptions() { return TArray<FName>{"Caster", "Target" }; }
-
 	UFUNCTION()
 	static TArray<FName> GetActorSpawnAttachmentRuleOptions()
 	{

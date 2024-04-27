@@ -9,6 +9,7 @@
 
 
 class UGameplayEffect;
+class UTireflyAbilityParam_Numeric;
 
 
 // GameplayAbility的GameplayEffect运行时参数
@@ -24,28 +25,16 @@ public:
 	TSubclassOf<UGameplayEffect> EffectClass = nullptr;
 
 	// GameplayEffect的持续时间
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "IsDurationParamNameNone()", EditConditionHides))
-	float DurationTime = 0.f;
-
-	// GameplayEffect的持续时间参数名称，用来指定Ability的其他参数作为该效果运行时的持续时间
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "DurationTime == 0", EditConditionHides, GetOptions = "GetAbilityParamOptions"))
-	FName DurationParamName = NAME_None;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTireflyAbilityParam_Numeric* DurationTime = nullptr;
 
 	// GameplayEffect的周期间隔
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "IsPeriodParamNameNone()", EditConditionHides))
-	float PeriodTime = 0.f;
-
-	// GameplayEffect的周期间隔参数名称，用来指定Ability的其他参数作为该效果运行时的周期间隔
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "PeriodTime == 0", EditConditionHides, GetOptions = "GetAbilityParamOptions"))
-	FName PeriodParamName = NAME_None;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTireflyAbilityParam_Numeric* PeriodTime = nullptr;
 
 	// GameplayEffect的周期间隔
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "IsStackToApplyParamNameNone()", EditConditionHides))
-	int32 StackToApply = 1;
-
-	// GameplayEffect的层数应用参数名称，用来指定Ability的其他参数作为该效果运行时的层数应用
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "StackToApply == 0", EditConditionHides, GetOptions = "GetAbilityParamOptions"))
-	FName StackToApplyParamName = NAME_None;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTireflyAbilityParam_Numeric* StackToApply = nullptr;
 
 	// GameplayEffect的SetByCallerModifier
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -54,16 +43,6 @@ public:
 	// GameplayEffect的ContextSetting
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<class UTireflyAbilityParamDetail_GameplayEffect_ContextSetting*> ContextSettings;
-
-public:
-	UFUNCTION()
-	bool IsDurationParamNameNone() const { return DurationParamName.IsNone(); }
-
-	UFUNCTION()
-	bool IsPeriodParamNameNone() const { return PeriodParamName.IsNone(); }
-
-	UFUNCTION()
-	bool IsStackToApplyParamNameNone() const { return StackToApplyParamName.IsNone(); }
 };
 
 

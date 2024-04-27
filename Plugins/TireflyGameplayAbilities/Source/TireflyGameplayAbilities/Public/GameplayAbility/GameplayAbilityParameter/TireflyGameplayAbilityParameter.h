@@ -6,6 +6,15 @@
 #include "TireflyGameplayAbilityParameter.generated.h"
 
 
+// GameplayAbility参数的来源类型
+UENUM(BlueprintType)
+enum class ETireflyAbilityParamSourceType : uint8
+{
+	Caster = 0		UMETA(ToolTip = "技能的释放者"),
+	Target = 1		UMETA(ToolTip = "技能效果的目标")
+};
+
+
 // GameplayAbility参数的基础结构
 UCLASS(Abstract, CollapseCategories, BlueprintType, Blueprintable, DefaultToInstanced, EditInlineNew)
 class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameter : public UObject

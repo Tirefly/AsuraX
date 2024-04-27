@@ -92,7 +92,7 @@ public:
 	// 创建是否成功输出引脚
 	void CreateSuccessPin();
 	// 创建结果输出引脚
-	void CreateResultPin(UClass* ResultType = nullptr, const FString& PinFriendlyName = FString());
+	void CreateResultPin(UClass* ResultType = nullptr, const FString& ResultName = FString());
 
 	// 重新创建变体结果输出引脚
 	void RecreateVariantPins();
@@ -116,7 +116,7 @@ public:
 	UTireflyGameplayAbilityAsset* GetAbilityAsset(UEdGraphPin* Pin = nullptr) const;
 
 protected:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	UClass* ResultPinType = nullptr;
 
 #pragma endregion

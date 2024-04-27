@@ -34,13 +34,16 @@ public:
 #pragma region GameplayAbility_DataAsset
 
 protected:
+	// 获取能力参数选项
 	UFUNCTION()
 	TArray<FName> GetAbilityParamOptions() const;
 	
 public:
+	// 获取能力资产
 	UFUNCTION(BlueprintCallable, Category = Ability)
 	UTireflyGameplayAbilityAsset* GetAbilityAsset() const { return AbilityAsset; }
-	
+
+	// 获取指定名称的能力参数
 	UFUNCTION(BlueprintCallable, Category = Ability)
 	UTireflyGameplayAbilityParameter* GetAbilityAssetParameter(
 		UPARAM(Meta = (GetParamOptions = "GetAbilityParamOptions"))FName ParamName) const;

@@ -2,7 +2,6 @@
 
 #include "TireflyGameplayAbilitiesDeveloperModule.h"
 
-#include "AssetRegistry/AssetRegistryModule.h"
 #include "BlueprintGraph/TireflyAbilityParameterNodePinFactory.h"
 
 

@@ -56,12 +56,12 @@ float UTireflyAbilityParam_AttributeCapture::GetParamValue(const UTireflyAbility
 float UTireflyAbilityParam_AttributeCapture::GetParamValueWithTarget(const UTireflyAbilitySystemComponent* CasterASC,
 	const UTireflyAbilitySystemComponent* TargetASC) const
 {
-	if (IsValid(CasterASC) && CaptureSource == FName("Caster"))
+	if (IsValid(CasterASC) && CaptureSource == ETireflyAbilityParamSourceType::Caster)
 	{
 		return CasterASC->GetNumericAttribute(AttributeToCapture);
 	}
 
-	if (IsValid(TargetASC) && CaptureSource == FName("Target"))
+	if (IsValid(TargetASC) && CaptureSource == ETireflyAbilityParamSourceType::Target)
 	{
 		return TargetASC->GetNumericAttribute(AttributeToCapture);
 	}

@@ -37,6 +37,7 @@ namespace GetAbilityParameter_Helper
 	const FString AssetRefPinFriendlyName(TEXT("Asset Ref"));
 	const FString AssetPakPinFriendlyName(TEXT("Asset Pak"));	
 	const FString SuccessPinFriendlyName(TEXT("Success"));
+	const FString ResultPinFriendlyName(TEXT("Result"));
 }
 
 
@@ -301,7 +302,7 @@ void UK2Node_GetAbilityParameter::AllocateDefaultPins()
 	CreateAbilityAssetSourcePin();
 	CreateParameterPin();
 	CreateSuccessPin();
-	CreateResultPin();
+	RecreateVariantPins();
 	
 	Super::AllocateDefaultPins();
 
@@ -471,15 +472,18 @@ void UK2Node_GetAbilityParameter::CreateSuccessPin()
 	Pin->PinFriendlyName = FText::AsCultureInvariant(GetAbilityParameter_Helper::SuccessPinFriendlyName);
 }
 
-void UK2Node_GetAbilityParameter::CreateResultPin(UClass* ResultType, const FString& PinFriendlyName)
+void UK2Node_GetAbilityParameter::CreateResultPin(UClass* ResultType, const FString& ResultName)
 {
 	if (ResultType != nullptr)
 	{
 		ResultPinType = ResultType;
 	}
+	const FString PinFriendlyName = ResultType != nullptr ? (ResultName.IsEmpty() ? GetAbilityParameter_Helper::ResultPinFriendlyName : ResultName)
+		: GetAbilityParameter_Helper::ResultPinFriendlyName;
+	
 	UEdGraphPin* Pin = CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Object, GetAbilityParameter_Helper::ResultPinName);
 	Pin->PinType.PinSubCategoryObject = (ResultType == nullptr ? UTireflyGameplayAbilityParameter::StaticClass() : ResultType);
-	Pin->PinFriendlyName = FText::AsCultureInvariant(PinFriendlyName.IsEmpty() ? FString("Result") : PinFriendlyName);
+	Pin->PinFriendlyName = FText::AsCultureInvariant(PinFriendlyName);
 }
 
 void UK2Node_GetAbilityParameter::RecreateVariantPins()
@@ -518,7 +522,14 @@ void UK2Node_GetAbilityParameter::RecreateVariantPinsInternal(const UTireflyGame
 	
 	if (Asset == nullptr || Parameter == NAME_None)
 	{
-		CreateResultPin();
+		if (Parameter != NAME_None)
+		{
+			CreateResultPin(ResultPinType, Parameter.ToString());
+		}
+		else
+		{
+			CreateResultPin();
+		}
 		return;
 	}
 

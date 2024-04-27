@@ -27,7 +27,7 @@ public:
 #pragma region AbilityActorInfo
 
 public:
-	// 初始化能力系统组件的ActorInfo，只能在本地客户端或服务端调用，在模拟端调用无效
+	// 初始化能力系统组件的ActorInfo，只能在本地客户端和服务端调用，在模拟端调用无效
 	UFUNCTION(BlueprintCallable, Category = Ability, Meta = (DisplayName = "Init Ability Actor Info"))
 	void K2_InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor);
 

@@ -16,7 +16,7 @@ void UTireflyGameplayAbility::PostEditChangeProperty(FPropertyChangedEvent& Prop
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (PropertyChangedEvent.Property && PropertyChangedEvent.Property->GetName() == "AbilityID")
+	if (PropertyChangedEvent.Property->GetName() == GET_MEMBER_NAME_CHECKED(UTireflyGameplayAbility, AbilityId))
 	{
 		if (AbilityId == NAME_None)
 		{

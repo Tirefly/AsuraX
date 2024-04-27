@@ -25,8 +25,6 @@ public:
 
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 
-	virtual void PostLoad() override;
-
 public:
 	// 数据资产类型：能力资产
 	static const FPrimaryAssetType GameplayAbilityAsset;

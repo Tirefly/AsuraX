@@ -96,17 +96,14 @@ public:
 	FGameplayAttribute AttributeToCapture;
 
 	// 属性抓取来源
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (GetOptions = "GetAttributeCaptureSourceOptions"))
-	FName CaptureSource = FName("Caster");
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	ETireflyAbilityParamSourceType CaptureSource = ETireflyAbilityParamSourceType::Caster;
 
 	// 是否抓取快照
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bSnapshot = false;
 
 public:
-	UFUNCTION()
-	static TArray<FName> GetAttributeCaptureSourceOptions() { return TArray<FName>{"Caster", "Target" }; }
-
 	// 获取特定等级的参数值
 	UFUNCTION(BlueprintPure, Category = "Ability")
 	float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC) const;

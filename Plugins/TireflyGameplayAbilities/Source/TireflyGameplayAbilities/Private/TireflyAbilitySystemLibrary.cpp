@@ -108,7 +108,7 @@ UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamO
 }
 
 bool UTireflyAbilitySystemLibrary::GetAttributeValueInRange(const UAbilitySystemComponent* ASC,
-                                                            const FGameplayAttribute& Attribute, float ValueToClamp, float& NewValue, float& MinValue, float& MaxValue)
+	const FGameplayAttribute& Attribute, float ValueToClamp, float& NewValue, float& MinValue, float& MaxValue)
 {
 	// 尝试获取TireflyAbilitySystem的默认设置
 	const UTireflyAbilitySystemSettings* SettingsGAS = GetDefault<UTireflyAbilitySystemSettings>();
