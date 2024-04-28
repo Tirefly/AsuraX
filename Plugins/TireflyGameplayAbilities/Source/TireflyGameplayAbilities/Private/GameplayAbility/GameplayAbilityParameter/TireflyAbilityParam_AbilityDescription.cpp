@@ -1,0 +1,35 @@
+// Copyright Tirefly. All Rights Reserved.
+
+
+#include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_AbilityDescription.h"
+
+#include "GameplayAbility/TireflyGameplayAbilityAsset.h"
+
+
+FText UTireflyAbilityParam_CommonDescription::GetShowcaseText() const
+{
+	const auto AbilityAsset = Cast<UTireflyGameplayAbilityAsset>(GetOuter());
+	if (!AbilityAsset)
+	{
+		return ShowcaseText;
+	}
+	
+	FString ShowcaseString = ShowcaseText.ToString();
+	const FRegexPattern ParamPattern(TEXT("#([^#]*)#"));
+	FRegexMatcher ParamMatcher(ParamPattern, ShowcaseString);
+		
+	while (ParamMatcher.FindNext())
+	{
+		FString ParamNameSharp = ParamMatcher.GetCaptureGroup(0);
+		FString ParamName = ParamMatcher.GetCaptureGroup(1);
+		const UTireflyGameplayAbilityParameter* Parameter = AbilityAsset->AbilityParameters.FindRef(FName(ParamName));
+		if (!Parameter)
+		{
+			continue;
+		}
+		
+		ShowcaseString = ShowcaseString.Replace(*ParamNameSharp, *Parameter->GetShowcaseText().ToString());
+	}
+	
+	return FText::FromString(ShowcaseString);
+}

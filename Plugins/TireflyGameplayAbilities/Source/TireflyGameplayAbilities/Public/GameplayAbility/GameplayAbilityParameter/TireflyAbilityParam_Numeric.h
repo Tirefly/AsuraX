@@ -75,7 +75,7 @@ public:
 	float ParamValue = 0.f;
 
 public:
-	virtual FString GetShowcaseText() const override;
+	virtual FText GetShowcaseText() const override;
 
 	// 获取参数值
 	UFUNCTION(BlueprintPure, Category = "Ability")
@@ -147,7 +147,7 @@ public:
 	TMap<int32, float> ParamValue;
 
 public:
-	virtual FString GetShowcaseText() const override;
+	virtual FText GetShowcaseText() const override;
 	
 	// 获取特定等级的参数值
 	UFUNCTION(BlueprintPure, Category = "Ability")
@@ -177,7 +177,7 @@ public:
 	FRuntimeFloatCurve ParamValue;
 
 public:
-	virtual FString GetShowcaseText() const override;
+	virtual FText GetShowcaseText() const override;
 	
 	// 获取特定等级的参数值
 	UFUNCTION(BlueprintPure, Category = "Ability")

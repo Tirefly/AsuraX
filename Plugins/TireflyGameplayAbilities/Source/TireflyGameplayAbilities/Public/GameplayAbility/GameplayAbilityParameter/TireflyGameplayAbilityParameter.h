@@ -23,13 +23,13 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameter : public UOb
 
 public:
 	// 用于展示的文本
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FString ShowcaseText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (MultiLine = "true"))
+	FText ShowcaseText;
 
 public:
 	// 获取用于展示的文本
 	UFUNCTION(BlueprintPure, Category = "Ability")
-	virtual FString GetShowcaseText() const { return ShowcaseText; }
+	virtual FText GetShowcaseText() const { return ShowcaseText; }
 
 	UFUNCTION()
 	virtual TArray<FName> GetAbilityParamOptions() const;

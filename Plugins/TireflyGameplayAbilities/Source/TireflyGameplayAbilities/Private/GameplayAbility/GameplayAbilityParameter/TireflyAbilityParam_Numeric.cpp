@@ -16,19 +16,19 @@ void UTireflyAbilityParam_ConstantNumeric::PostEditChangeProperty(FPropertyChang
 	{
 		if (ParamValue == 0.f)
 		{
-			ShowcaseText = FString("0");
+			ShowcaseText = FText::FromString("0");
 			return;
 		}
 		ShowcaseText = GetShowcaseText();
 	}
 }
 
-FString UTireflyAbilityParam_ConstantNumeric::GetShowcaseText() const
+FText UTireflyAbilityParam_ConstantNumeric::GetShowcaseText() const
 {
 	FString OutText = FString::Printf(TEXT("%g"), ParamValue);
 	if (CalcMode & (1 << static_cast<uint8>(ETireflyAbilityNumericParamCalcMode::Percentage)))
 		OutText += TEXT("%");
-	return OutText;
+	return FText::FromString(OutText);
 }
 
 float UTireflyAbilityParam_ConstantNumeric::GetParamValue() const
@@ -79,14 +79,14 @@ void UTireflyAbilityParam_LevelBasedNumeric_Array::PostEditChangeProperty(FPrope
 	{
 		if (ParamValue.IsEmpty())
 		{
-			ShowcaseText.Empty();
+			ShowcaseText = FText::FromString("");
 			return;
 		}
 		ShowcaseText = GetShowcaseText();
 	}
 }
 
-FString UTireflyAbilityParam_LevelBasedNumeric_Array::GetShowcaseText() const
+FText UTireflyAbilityParam_LevelBasedNumeric_Array::GetShowcaseText() const
 {
 	FString OutText;
 	for (auto& Pair : ParamValue)
@@ -97,7 +97,7 @@ FString UTireflyAbilityParam_LevelBasedNumeric_Array::GetShowcaseText() const
 		OutText += FString::Printf(TEXT("%s/"), *Param);
 	}
 	OutText.RemoveFromEnd(TEXT("/"));
-	return OutText;
+	return FText::FromString(OutText);
 }
 
 float UTireflyAbilityParam_LevelBasedNumeric_Array::GetParamValue(const UTireflyAbilitySystemComponent* ASC,
@@ -134,14 +134,14 @@ void UTireflyAbilityParam_LevelBasedNumeric_Curve::PostEditChangeProperty(FPrope
 	{
 		if (ParamValue.GetRichCurveConst()->Keys.IsEmpty())
 		{
-			ShowcaseText.Empty();
+			ShowcaseText = FText::FromString("");
 			return;
 		}
 		ShowcaseText = GetShowcaseText();
 	}
 }
 
-FString UTireflyAbilityParam_LevelBasedNumeric_Curve::GetShowcaseText() const
+FText UTireflyAbilityParam_LevelBasedNumeric_Curve::GetShowcaseText() const
 {
 	FString OutText;
 	if (const FRichCurve* RichCurve = ParamValue.GetRichCurveConst())
@@ -153,8 +153,8 @@ FString UTireflyAbilityParam_LevelBasedNumeric_Curve::GetShowcaseText() const
 		+ TEXT("~") + FString::Printf(TEXT("%g"), LastKey)
 		+ FString((CalcMode & (1 << static_cast<uint8>(ETireflyAbilityNumericParamCalcMode::Percentage))) ? "%" : "");
 	}
-		
-	return OutText;
+	
+	return FText::FromString(OutText);
 }
 
 float UTireflyAbilityParam_LevelBasedNumeric_Curve::GetParmaValueAtLevel(int32 Level) const
