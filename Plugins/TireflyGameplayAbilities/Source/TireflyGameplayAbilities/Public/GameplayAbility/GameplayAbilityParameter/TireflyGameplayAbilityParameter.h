@@ -6,6 +6,15 @@
 #include "TireflyGameplayAbilityParameter.generated.h"
 
 
+class UTireflyGameplayAbilityAsset;
+
+
+namespace TireflyAbilityParameterHelper
+{
+	static UTireflyGameplayAbilityAsset* GetAbilityAsset(const UObject* InObject);
+}
+
+
 // GameplayAbility参数的来源类型
 UENUM(BlueprintType)
 enum class ETireflyAbilityParamSourceType : uint8
@@ -15,9 +24,8 @@ enum class ETireflyAbilityParamSourceType : uint8
 };
 
 
-// GameplayAbility参数的基础结构
 UCLASS(Abstract, CollapseCategories, BlueprintType, Blueprintable, DefaultToInstanced, EditInlineNew)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameter : public UObject
+class UTireflyGameplayAbilityParameterBase : public UObject
 {
 	GENERATED_BODY()
 
@@ -33,6 +41,16 @@ public:
 
 	UFUNCTION()
 	virtual TArray<FName> GetAbilityParamOptions() const;
+
+	FName GetAbilityParameterName() const;
+};
+
+
+// GameplayAbility参数的基础结构
+UCLASS(Abstract)
+class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameter : public UTireflyGameplayAbilityParameterBase
+{
+	GENERATED_BODY()
 };
 
 
@@ -43,5 +61,6 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameterDetail : publ
 	GENERATED_BODY()
 
 protected:
-	TArray<FName> GetAbilityParamOptions() const;
+	UFUNCTION()
+	virtual TArray<FName> GetAbilityParamOptions() const;
 };

@@ -6,11 +6,11 @@
 #include "Engine/DeveloperSettings.h"
 #include "GameplayTagContainer.h"
 #include "GameplayAttribute/TireflyAttributeRangeConfig.h"
+#include "GameplayEffect/TireflyGameplayEffect.h"
 #include "TireflyAbilitySystemSettings.generated.h"
 
-/**
- * 
- */
+
+// Tirefly Gameplay Ability System Developer Settings
 UCLASS(Config = TireflyAbilitySystemSettings, DefaultConfig)
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilitySystemSettings : public UDeveloperSettings
 {
@@ -46,9 +46,13 @@ protected:
 #pragma region GameplayAttribute_RangeSetting
 
 public:
+	// 获取指定属性的范围设置
+	const FTireflyAttributeRangeConfig* GetAttributeRangeConfig(const FGameplayAttribute& Attribute) const;
+	
+protected:
 	// 属性的范围设置
 	UPROPERTY(Config, EditAnywhere, Category = "Gameplay Attribute")
-	TMap<FGameplayAttribute, FTireflyAttributeRangeConfig> AttributeRangeConfigList;
+	TArray<FTireflyAttributeRangeConfig> AttributeRangeConfigList;
 
 #pragma endregion
 
@@ -56,13 +60,18 @@ public:
 #pragma region GameplayEffect_SetByCaller
 
 public:
+	FGameplayTag GetGenericDurationSetByCallerTag() const { return GenericDurationSetByCallerTag; }
+
+	const FTireflySetByCallerTagConfig* GetSetByCallerTagConfig(const FGameplayAttribute& Attribute) const;
+
+protected:
 	// 通用的GameplayEffect持续时间SetByCaller
 	UPROPERTY(Config, EditAnywhere, Category = "Gameplay Effect")
 	FGameplayTag GenericDurationSetByCallerTag;
 
 	// GameplayEffect中属性对应的SetByCallerTag，帮助开发者更快速的配置GameplayEffect的SetByCaller类属性修改器
 	UPROPERTY(Config, EditAnywhere, Category = "Gameplay Effect")
-	TMap<FGameplayAttribute, FGameplayTag> GenericSetByCallerTagList;
+	TArray<FTireflySetByCallerTagConfig> GenericSetByCallerTagList;
 
 #pragma endregion
 };

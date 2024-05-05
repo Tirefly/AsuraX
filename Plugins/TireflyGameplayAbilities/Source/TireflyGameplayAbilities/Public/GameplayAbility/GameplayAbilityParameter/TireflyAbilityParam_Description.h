@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "TireflyGameplayAbilityParameter.h"
-#include "TireflyAbilityParam_AbilityDescription.generated.h"
+#include "TireflyAbilityParam_Description.generated.h"
 
 
 // GameplayAbility的描述基础结构
 UCLASS(Abstract)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_DescriptionBase : public UTireflyGameplayAbilityParameter
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_DescriptionBase : public UTireflyGameplayAbilityParameterBase
 {
 	GENERATED_BODY()
 };

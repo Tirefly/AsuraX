@@ -107,20 +107,35 @@ UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamO
 	return OutParameter;
 }
 
-bool UTireflyAbilitySystemLibrary::GetAttributeValueInRange(const UAbilitySystemComponent* ASC,
-	const FGameplayAttribute& Attribute, float ValueToClamp, float& NewValue, float& MinValue, float& MaxValue)
+bool UTireflyAbilitySystemLibrary::GetAttributeValueInRange(const AActor* Actor,
+	FGameplayAttribute Attribute, float ValueToClamp, float& NewValue, FVector2D& OutRange)
 {
+	if (!Actor)
+	{
+		NewValue = ValueToClamp;
+		return false;
+	}
+
+	const UAbilitySystemComponent* const ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor);
+	if (!ASC)
+	{
+		NewValue = ValueToClamp;
+		return false;
+	}
+	
 	// 尝试获取TireflyAbilitySystem的默认设置
 	const UTireflyAbilitySystemSettings* SettingsGAS = GetDefault<UTireflyAbilitySystemSettings>();
 	if (!IsValid(SettingsGAS))
 	{
+		NewValue = ValueToClamp;
 		return false;
 	}
 
 	// 查找指定属性的范围设置
-	const FTireflyAttributeRangeConfig* AttributeRangeConfig = SettingsGAS->AttributeRangeConfigList.Find(Attribute);
+	const FTireflyAttributeRangeConfig* AttributeRangeConfig = SettingsGAS->GetAttributeRangeConfig(Attribute);
 	if (!AttributeRangeConfig)
 	{
+		NewValue = ValueToClamp;
 		return false;
 	}
 
@@ -128,17 +143,51 @@ bool UTireflyAbilitySystemLibrary::GetAttributeValueInRange(const UAbilitySystem
 	if (AttributeRangeConfig->MinValueType == ETireflyAttributeRangeType::None
 		&& AttributeRangeConfig->MaxValueType == ETireflyAttributeRangeType::None)
 	{
+		NewValue = ValueToClamp;
 		return false;
 	}
 
-	// 计算最小值和最大值
-	MinValue = AttributeRangeConfig->MinValueType == ETireflyAttributeRangeType::Attribute ? ASC->GetNumericAttribute(AttributeRangeConfig->MinAttribute)
-		: (AttributeRangeConfig->MinValueType == ETireflyAttributeRangeType::Numeric ? AttributeRangeConfig->MinValue : -3.4e+38);
-	MaxValue = AttributeRangeConfig->MaxValueType == ETireflyAttributeRangeType::Attribute ? ASC->GetNumericAttribute(AttributeRangeConfig->MaxAttribute)
-		: (AttributeRangeConfig->MaxValueType == ETireflyAttributeRangeType::Numeric ? AttributeRangeConfig->MaxValue : 3.4e+38);
+	// 计算最小值
+	switch (AttributeRangeConfig->MinValueType)
+	{
+	case ETireflyAttributeRangeType::Attribute:
+		{
+			OutRange.X = ASC->GetNumericAttribute(AttributeRangeConfig->MinAttribute);
+			break;
+		}
+	case ETireflyAttributeRangeType::Numeric:
+		{
+			OutRange.X = AttributeRangeConfig->MinValue;
+			break;
+		}
+	case ETireflyAttributeRangeType::None:
+		{
+			OutRange.X = (double)INT64_MIN;
+			break;
+		}
+	}
+
+	// 计算最大值
+	switch (AttributeRangeConfig->MaxValueType)
+	{
+	case ETireflyAttributeRangeType::Attribute:
+		{
+			OutRange.Y = ASC->GetNumericAttribute(AttributeRangeConfig->MaxAttribute);
+			break;
+		}
+	case ETireflyAttributeRangeType::Numeric:
+		{
+			OutRange.Y = AttributeRangeConfig->MaxValue;
+			break;
+		}
+	case ETireflyAttributeRangeType::None:
+		{
+			OutRange.Y = (double)INT64_MAX;
+			break;
+		}
+	}
 	
 	// 将输入值限制在最小值和最大值之间，并将结果赋给NewValue
-	NewValue = FMath::Clamp<float>(ValueToClamp, MinValue, MaxValue);
-
-	return false;
+	NewValue = FMath::Clamp<float>(ValueToClamp, OutRange.X, OutRange.Y);
+	return true;
 }

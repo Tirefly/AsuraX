@@ -77,8 +77,8 @@ public:
 
 	// 获取属性被应用修改后在范围设置内的新的当前值，以及最小范围值和最大范围值
 	UFUNCTION(BlueprintPure, Category = "Ability|Attribute")
-	static bool GetAttributeValueInRange(const UAbilitySystemComponent* ASC, const FGameplayAttribute& Attribute
-		, float ValueToClamp, float& NewValue, float& MinValue, float& MaxValue);
+	static bool GetAttributeValueInRange(const AActor* Actor, FGameplayAttribute Attribute,
+		float ValueToClamp, float& NewValue, FVector2D& OutRange);
 
 #pragma endregion
 };

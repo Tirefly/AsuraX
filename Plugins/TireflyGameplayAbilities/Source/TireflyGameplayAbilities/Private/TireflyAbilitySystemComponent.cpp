@@ -54,6 +54,11 @@ void UTireflyAbilitySystemComponent::InitAttributeSetFromDataTableRow(
 	UTireflyAttributeSet* AttributeSet = const_cast<UTireflyAttributeSet*>(Cast<UTireflyAttributeSet>(GetAttributeSet(AttributeSetClass)));
 	if (!IsValid(AttributeSet))
 	{
+		AttributeSet = const_cast<UTireflyAttributeSet*>(AddAttributeSet(AttributeSetClass));
+	}
+
+	if (!IsValid(AttributeSet))
+	{
 		return;
 	}
 
@@ -119,4 +124,28 @@ void UTireflyAbilitySystemComponent::HandleOnGameplayAttributeValueChanged(const
 	}
 
 	OnAttributeValueChanged.Broadcast(Data.Attribute, Data.NewValue, Data.OldValue, SourceTags);
+}
+
+void UTireflyAbilitySystemComponent::NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle,
+	UGameplayAbility* Ability)
+{
+	Super::NotifyAbilityActivated(Handle, Ability);
+
+	OnAbilityActivated.Broadcast(Handle);
+}
+
+void UTireflyAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle,
+	UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason)
+{
+	Super::NotifyAbilityFailed(Handle, Ability, FailureReason);
+
+	OnAbilityActivatingFailed.Broadcast(Handle, FailureReason);
+}
+
+void UTireflyAbilitySystemComponent::NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
+	bool bWasCancelled)
+{
+	Super::NotifyAbilityEnded(Handle, Ability, bWasCancelled);
+
+	OnAbilityEnded.Broadcast(Handle, bWasCancelled);
 }

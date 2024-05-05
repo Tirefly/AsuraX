@@ -6,8 +6,16 @@
 #include "AttributeSet.h"
 #include "TireflyAttributeSet.generated.h"
 
+
+#define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
+GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
+GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+
+
 /**
- * 
+ * 扩展了一些功能支持的AttributeSet，扩展的功能如下：
  */
 UCLASS()
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAttributeSet : public UAttributeSet

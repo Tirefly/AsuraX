@@ -1,14 +1,14 @@
 // Copyright Tirefly. All Rights Reserved.
 
 
-#include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_AbilityDescription.h"
+#include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_Description.h"
 
 #include "GameplayAbility/TireflyGameplayAbilityAsset.h"
 
 
 FText UTireflyAbilityParam_CommonDescription::GetShowcaseText() const
 {
-	const auto AbilityAsset = Cast<UTireflyGameplayAbilityAsset>(GetOuter());
+	const UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this);
 	if (!AbilityAsset)
 	{
 		return ShowcaseText;

@@ -6,12 +6,20 @@
 #include "AbilitySystemComponent.h"
 #include "TireflyAbilitySystemComponent.generated.h"
 
+
 class UTireflyAttributeSet;
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTireflyGameplayAbilityDelegate, const FGameplayAbilitySpecHandle, AbilityHandle);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FTireflyGameplayAbilityCooldownDelegate, const FGameplayAbilitySpecHandle, AbiltyHandle, float, NewTimeRemaining, float, TotalDuration);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTireflyGameplayAbilityFailedDelegate, const FGameplayAbilitySpecHandle, AbilityHandle, const FGameplayTagContainer&, EventTags);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTireflyGameplayAbilityEndedDelegate, const FGameplayAbilitySpecHandle, AbilityHandle, bool, bWasCanceled);
+
 
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup = AbilitySystem, Meta = (BlueprintSpawnableComponent))
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
@@ -109,6 +117,43 @@ public:
 	// Delegate event triggered when the base value of the attribute changes.
 	UPROPERTY(BlueprintAssignable, Category = "Gameplay Attributes")
 	FTireflyGameplayAttributeDelegate OnAttributeBaseValueChanged;
+
+#pragma endregion
+
+
+#pragma region GameplayAbility_Delegates
+
+public:
+	virtual void NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability) override;
+
+	virtual void NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason) override;
+
+	virtual void NotifyAbilityEnded(FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability, bool bWasCancelled) override;
+
+public:
+	// 当能力被激活时触发的委托事件
+	UPROPERTY(BlueprintAssignable, Category = "Gameplay Abilities")
+	FTireflyGameplayAbilityDelegate OnAbilityActivated;
+
+	// 当能力的消耗部分已提交时触发的委托事件
+	UPROPERTY(BlueprintAssignable, Category = "Gameplay Abilities")
+	FTireflyGameplayAbilityDelegate OnAbilityCostCommitted;
+
+	// 当能力的冷却状态发生变化时触发的委托事件
+	UPROPERTY(BlueprintAssignable, Category = "Gameplay Abilities")
+	FTireflyGameplayAbilityCooldownDelegate OnAbilityCooldownCommitted;
+
+	// 当能力结束时触发的委托事件
+	UPROPERTY(BlueprintAssignable, Category = "Gameplay Abilities")
+	FTireflyGameplayAbilityEndedDelegate OnAbilityEnded;
+
+	// 当激活能力失败时触发的委托事件
+	UPROPERTY(BlueprintAssignable, Category = "Gameplay Abilities")
+	FTireflyGameplayAbilityFailedDelegate OnAbilityActivatingFailed;
+
+	// 当能力的冷却状态发生变化时触发的委托事件
+	UPROPERTY(BlueprintAssignable, Category = "Gameplay Abilities")
+	FTireflyGameplayAbilityCooldownDelegate OnAbilityCooldownChanged;
 
 #pragma endregion
 };

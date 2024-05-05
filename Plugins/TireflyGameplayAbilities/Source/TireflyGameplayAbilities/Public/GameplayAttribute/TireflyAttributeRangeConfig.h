@@ -22,6 +22,10 @@ struct FTireflyAttributeRangeConfig
 	GENERATED_BODY()
 
 public:
+	// 属性类型
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayAttribute AttributeType = FGameplayAttribute();
+	
 	// 属性最小值的范围类型
 	UPROPERTY(EditDefaultsOnly)
 	ETireflyAttributeRangeType MinValueType = ETireflyAttributeRangeType::None;

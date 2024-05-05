@@ -6,10 +6,28 @@
 #include "GameplayAbility/TireflyGameplayAbilityAsset.h"
 
 
-TArray<FName> UTireflyGameplayAbilityParameter::GetAbilityParamOptions() const
+UTireflyGameplayAbilityAsset* TireflyAbilityParameterHelper::GetAbilityAsset(const UObject* InObject)
+{
+	UTireflyGameplayAbilityAsset* OuterAsset = nullptr;
+	UObject* Outer = InObject->GetOuter();
+
+	while (Outer)
+	{
+		if (Outer->IsA<UTireflyGameplayAbilityAsset>())
+		{
+			OuterAsset = Cast<UTireflyGameplayAbilityAsset>(Outer);
+			break;
+		}
+		Outer = Outer->GetOuter();
+	}
+	
+	return OuterAsset;
+}
+
+TArray<FName> UTireflyGameplayAbilityParameterBase::GetAbilityParamOptions() const
 {
 	TArray<FName> OutOptions;
-	if (const auto AbilityAsset = Cast<UTireflyGameplayAbilityAsset>(GetOuter()))
+	if (const UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this))
 	{
 		for (const auto& Param : AbilityAsset->AbilityParameters)
 		{
@@ -23,6 +41,22 @@ TArray<FName> UTireflyGameplayAbilityParameter::GetAbilityParamOptions() const
 	}
 	
 	return OutOptions;
+}
+
+FName UTireflyGameplayAbilityParameterBase::GetAbilityParameterName() const
+{
+	if (const UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this))
+	{
+		for (const auto& Param : AbilityAsset->AbilityParameters)
+		{
+			if (Param.Value == this)
+			{
+				return Param.Key;
+			}
+		}
+	}
+
+	return NAME_None;
 }
 
 TArray<FName> UTireflyGameplayAbilityParameterDetail::GetAbilityParamOptions() const

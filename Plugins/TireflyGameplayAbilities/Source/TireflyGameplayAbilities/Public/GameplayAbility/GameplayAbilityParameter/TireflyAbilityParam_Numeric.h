@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "TireflyGameplayAbilityParameter.h"
-#include "AttributeSet.h"
 #include "GameplayAbilitySpecHandle.h"
+#include "Abilities/GameplayAbilityTargetTypes.h"
 #include "TireflyAbilityParam_Numeric.generated.h"
 
 
@@ -43,8 +43,23 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_Numeric
 
 public:
 	// 参数值计算模式
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Bitmask, BitmaskEnum = "/Script/TireflyGameplayAbilities.ETireflyAbilityNumericParamCalcMode"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Bitmask,
+		BitmaskEnum = "/Script/TireflyGameplayAbilities.ETireflyAbilityNumericParamCalcMode"))
 	int32 CalcMode = (1 << static_cast<uint8>(ETireflyAbilityNumericParamCalcMode::None));
+
+public:
+	// 获取参数值，返回值会经过“CalcMode”处理
+	float GetParamValueCalculated(const float& InParamValue) const;
+	
+	// 获取参数值
+	UFUNCTION(BlueprintPure, Category = Ability)
+	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+								int32 Level = 1) const
+	{
+		return 0.f;
+	}
 };
 
 
@@ -65,9 +80,9 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_ConstantNumeric
 	GENERATED_BODY()
 
 public:
-	#if WITH_EDITOR
-		virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	#endif
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 public:
 	// 参数值，仅当ValueMode为Constant时生效
@@ -78,8 +93,10 @@ public:
 	virtual FText GetShowcaseText() const override;
 
 	// 获取参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParamValue() const;
+	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+								int32 Level = 1) const override;
 };
 
 
@@ -104,14 +121,11 @@ public:
 	bool bSnapshot = false;
 
 public:
-	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC) const;
-
-	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParamValueWithTarget(const UTireflyAbilitySystemComponent* CasterASC
-		, const UTireflyAbilitySystemComponent* TargetASC) const;
+	// 获取参数值
+	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+								int32 Level = 1) const override;
 };
 
 
@@ -126,6 +140,11 @@ public:
 	// 参数值计算模式
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ETireflyAbilityNumericParamLevelBasedMode LevelBasedMode;
+
+public:
+	// 获取特定等级的参数值
+	UFUNCTION(BlueprintPure, Category = "Ability")
+	virtual float GetParmaValueAtLevel(int32 Level = 1) const { return 0; }
 };
 
 
@@ -137,9 +156,9 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_LevelBasedNumeric_Array
 	GENERATED_BODY()
 
 public:
-	#if WITH_EDITOR
-		virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	#endif
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 public:
 	// 基于等级的参数值曲线
@@ -150,12 +169,13 @@ public:
 	virtual FText GetShowcaseText() const override;
 	
 	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParmaValueAtLevel(int32 Level) const { return ParamValue.FindRef(Level); }
+	virtual float GetParmaValueAtLevel(int32 Level = 1) const override;
 
-	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParamValue(const UTireflyAbilitySystemComponent* ASC, const FGameplayAbilitySpecHandle& Handle, int32 Level) const;
+	// 获取参数值
+	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+								int32 Level = 1) const override;
 };
 
 
@@ -167,9 +187,9 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_LevelBasedNumeric_Curve
 	GENERATED_BODY()
 
 public:
-	#if WITH_EDITOR
-		virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	#endif
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 public:
 	// 基于等级的参数值曲线
@@ -180,12 +200,13 @@ public:
 	virtual FText GetShowcaseText() const override;
 	
 	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParmaValueAtLevel(int32 Level) const;
+	virtual float GetParmaValueAtLevel(int32 Level) const override;
 
-	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParamValue(const UTireflyAbilitySystemComponent* ASC, const FGameplayAbilitySpecHandle& Handle, int32 Level) const;
+	// 获取参数值
+	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+								int32 Level = 1) const override;
 };
 
 
@@ -211,12 +232,9 @@ public:
 	TMap<FString, UTireflyAbilityParam_ExpressionVariable*> ExpressionVariables;
 
 public:
-	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC, const FGameplayAbilitySpecHandle& Handle, int32 Level) const;
-
-	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	float GetParamValueWithTarget(const UTireflyAbilitySystemComponent* CasterASC, const UTireflyAbilitySystemComponent* TargetASC
-		, const FGameplayAbilitySpecHandle& Handle, int32 Level) const;
+	// 获取数学表达式的参数值
+	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+								int32 Level = 1) const override;
 };

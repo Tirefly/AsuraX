@@ -4,18 +4,45 @@
 
 #include "CoreMinimal.h"
 #include "TireflyGameplayAbilityParameter.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "GameplayEffectTypes.h"
 #include "TireflyAbilityParam_Cost.generated.h"
 
 
+class UTireflyAbilitySystemComponent;
 class UTireflyAbilityParam_Numeric;
 
 
 // GameplayAbility花费设置的基础结构
 UCLASS(Abstract)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CostBase : public UTireflyGameplayAbilityParameter
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CostBase : public UTireflyGameplayAbilityParameterBase
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION()
+	virtual FGameplayAttribute GetCostAttribute() const { return FGameplayAttribute(nullptr); }
+
+	UFUNCTION()
+	virtual TEnumAsByte<EGameplayModOp::Type> GetModifierOp() const { return EGameplayModOp::Additive; }
+	
+	UFUNCTION()
+	virtual float GetCostValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+							   const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+							   const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+							   int32 Level = 1) const
+	{
+		return 0.f;
+	}
+
+	UFUNCTION()
+	virtual bool CheckCost(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+						   const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+						   const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+						   int32 Level = 1) const
+	{
+		return true;
+	}
 };
 
 
@@ -34,6 +61,22 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TEnumAsByte<EGameplayModOp::Type> ModifierOp = EGameplayModOp::Additive;
 
+	// 花费的值
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTireflyAbilityParam_Numeric* CostValue = nullptr;
+
+public:
+	virtual FGameplayAttribute GetCostAttribute() const override { return Attribute; }
+
+	virtual TEnumAsByte<EGameplayModOp::Type> GetModifierOp() const override { return ModifierOp; }
+	
+	virtual float GetCostValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+							   const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+							   const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+							   int32 Level = 1) const override;
+
+	virtual bool CheckCost(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+						   const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+						   const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+						   int32 Level = 1) const override;
 };
