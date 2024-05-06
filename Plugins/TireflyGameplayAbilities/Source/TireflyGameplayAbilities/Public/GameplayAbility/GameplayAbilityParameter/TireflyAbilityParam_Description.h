@@ -22,5 +22,5 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CommonDescription : publ
 	GENERATED_BODY()
 
 public:
-	virtual FText GetShowcaseText() const override;
+	virtual FText GetShowcaseText_Implementation() const override;
 };

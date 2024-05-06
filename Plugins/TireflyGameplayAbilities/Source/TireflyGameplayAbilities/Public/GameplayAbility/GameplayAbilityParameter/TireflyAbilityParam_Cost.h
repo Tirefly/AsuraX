@@ -20,26 +20,38 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CostBase : public UTiref
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
+	// 获取花费的属性
+	UFUNCTION(BlueprintPure, Category = "Ability")
 	virtual FGameplayAttribute GetCostAttribute() const { return FGameplayAttribute(nullptr); }
 
-	UFUNCTION()
+	// 获取属性的修改方式
+	UFUNCTION(BlueprintPure, Category = "Ability")
 	virtual TEnumAsByte<EGameplayModOp::Type> GetModifierOp() const { return EGameplayModOp::Additive; }
-	
-	UFUNCTION()
-	virtual float GetCostValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-							   const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-							   const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-							   int32 Level = 1) const
+
+	// 获取花费的数值
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
+	float GetCostValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const;
+	virtual float GetCostValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const
 	{
 		return 0.f;
 	}
 
-	UFUNCTION()
-	virtual bool CheckCost(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-						   const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-						   const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-						   int32 Level = 1) const
+	// 检查是否满足花费
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
+	bool CheckCost(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const;
+	virtual bool CheckCost_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const
 	{
 		return true;
 	}
@@ -70,13 +82,15 @@ public:
 
 	virtual TEnumAsByte<EGameplayModOp::Type> GetModifierOp() const override { return ModifierOp; }
 	
-	virtual float GetCostValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-							   const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-							   const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-							   int32 Level = 1) const override;
+	virtual float GetCostValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const override;
 
-	virtual bool CheckCost(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-						   const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-						   const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-						   int32 Level = 1) const override;
+	virtual bool CheckCost_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const override;
+
+	virtual FText GetShowcaseText_Implementation() const override;
 };

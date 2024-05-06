@@ -38,4 +38,7 @@ public:
 	// 蒙太奇开始播放的时间
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float StartTimeSeconds = 0.f;
+
+public:
+	virtual bool IsShowcaseTextEditable_Implementation() const override { return false; }
 };

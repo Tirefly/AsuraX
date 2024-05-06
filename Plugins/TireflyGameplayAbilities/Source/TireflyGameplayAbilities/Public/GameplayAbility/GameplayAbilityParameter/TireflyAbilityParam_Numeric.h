@@ -49,14 +49,19 @@ public:
 
 public:
 	// 获取参数值，返回值会经过“CalcMode”处理
+	UFUNCTION(BlueprintPure, Category = "Ability")
 	float GetParamValueCalculated(const float& InParamValue) const;
 	
 	// 获取参数值
-	UFUNCTION(BlueprintPure, Category = Ability)
-	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-								int32 Level = 1) const
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = Ability)
+	float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const;
+	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const
 	{
 		return 0.f;
 	}
@@ -90,13 +95,13 @@ public:
 	float ParamValue = 0.f;
 
 public:
-	virtual FText GetShowcaseText() const override;
+	virtual FText GetShowcaseText_Implementation() const override;
 
 	// 获取参数值
-	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-								int32 Level = 1) const override;
+	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const override;
 };
 
 
@@ -122,10 +127,10 @@ public:
 
 public:
 	// 获取参数值
-	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-								int32 Level = 1) const override;
+	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const override;
 };
 
 
@@ -166,16 +171,16 @@ public:
 	TMap<int32, float> ParamValue;
 
 public:
-	virtual FText GetShowcaseText() const override;
+	virtual FText GetShowcaseText_Implementation() const override;
 	
 	// 获取特定等级的参数值
 	virtual float GetParmaValueAtLevel(int32 Level = 1) const override;
 
 	// 获取参数值
-	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-								int32 Level = 1) const override;
+	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const override;
 };
 
 
@@ -197,16 +202,16 @@ public:
 	FRuntimeFloatCurve ParamValue;
 
 public:
-	virtual FText GetShowcaseText() const override;
+	virtual FText GetShowcaseText_Implementation() const override;
 	
 	// 获取特定等级的参数值
 	virtual float GetParmaValueAtLevel(int32 Level) const override;
 
 	// 获取参数值
-	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-								int32 Level = 1) const override;
+	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const override;
 };
 
 
@@ -233,8 +238,8 @@ public:
 
 public:
 	// 获取数学表达式的参数值
-	virtual float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-								const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-								const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-								int32 Level = 1) const override;
+	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const override;
 };

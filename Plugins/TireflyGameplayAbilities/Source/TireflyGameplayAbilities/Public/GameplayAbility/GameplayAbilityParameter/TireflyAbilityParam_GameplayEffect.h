@@ -50,19 +50,21 @@ public:
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
-
-public:
+	
 	// 创建GameplayEffectSpec
-	UFUNCTION(BlueprintPure, Category = Ability)
-	virtual FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec(UTireflyAbilitySystemComponent* CasterASC = nullptr,
-																	 const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-																	 int32 Level = 1);
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = Ability)
+	FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec(UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(), int32 Level = 1);
+	virtual FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec_Implementation(UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(), int32 Level = 1);
 
 	UFUNCTION()
 	bool IsEffectHasDuration() const;
 	
 	UFUNCTION()
 	bool IsEffectNotInstant() const;
+
+	virtual bool IsShowcaseTextEditable_Implementation() const override { return false; }
 };
 
 
@@ -103,15 +105,15 @@ public:
 	TArray<FName> GetSetByCallerModifierParamNames() const;
 	
 	// 为GameplayEffectSpec修改或添加SetByCallerModifier
-	UFUNCTION(BlueprintNativeEvent, Category = GameplayEffect, Meta = (ForceAsFunction))
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = GameplayEffect, Meta = (ForceAsFunction))
 	void AssignSetByCallerModifier(UPARAM(ref)FGameplayEffectSpecHandle& Spec,
-								  UTireflyAbilitySystemComponent* CasterASC = nullptr,
-								  const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-								  int32 Level = 1);
+		UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1);
 	virtual void AssignSetByCallerModifier_Implementation(UPARAM(ref)FGameplayEffectSpecHandle& EffectSpecHandle,
-														  UTireflyAbilitySystemComponent* CasterASC = nullptr,
-														  const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-														  int32 Level = 1) {}
+		UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) {}
 
 	UTireflyAbilityParam_Numeric* GetMagnitude() const;
 };
@@ -130,9 +132,9 @@ public:
 public:
 	// 为GameplayEffectSpec修改或添加SetByCallerModifier
 	virtual void AssignSetByCallerModifier_Implementation(UPARAM(ref)FGameplayEffectSpecHandle& EffectSpecHandle,
-														  UTireflyAbilitySystemComponent* CasterASC = nullptr,
-														  const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-														  int32 Level = 1) override;
+		UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) override;
 };
 
 // GameplayEffect的TagSetByCaller设置细节
@@ -149,9 +151,9 @@ public:
 public:
 	// 为GameplayEffectSpec修改或添加SetByCallerModifier
 	virtual void AssignSetByCallerModifier_Implementation(UPARAM(ref)FGameplayEffectSpecHandle& EffectSpecHandle,
-														  UTireflyAbilitySystemComponent* CasterASC = nullptr,
-														  const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-														  int32 Level = 1) override;
+		UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) override;
 };
 
 #pragma endregion
@@ -168,15 +170,15 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParamDetail_GameplayEffect_Con
 
 public:
 	// 修改GameplayEffectContext
-	UFUNCTION(BlueprintNativeEvent, Category = GameplayEffect, Meta = (ForceAsFunction))
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = GameplayEffect, Meta = (ForceAsFunction))
 	void ModifyGameplayEffectContext(UPARAM(ref)FGameplayEffectContextHandle& Context,
-									 UTireflyAbilitySystemComponent* CasterASC = nullptr,
-					   				 const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-					   				 int32 Level = 1);
+		UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1);
 	virtual void ModifyGameplayEffectContext_Implementation(UPARAM(ref)FGameplayEffectContextHandle& Context,
-															UTireflyAbilitySystemComponent* CasterASC = nullptr,
-															const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-															int32 Level = 1){}
+		UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) {}
 };
 
 #pragma endregion

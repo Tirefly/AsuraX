@@ -31,17 +31,26 @@ class UTireflyGameplayAbilityParameterBase : public UObject
 
 public:
 	// 用于展示的文本
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (MultiLine = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (MultiLine = "true", EditCondition = "IsShowcaseTextEditable", EditConditionHides))
 	FText ShowcaseText;
 
 public:
 	// 获取用于展示的文本
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
+	FText GetShowcaseText() const;
+	virtual FText GetShowcaseText_Implementation() const { return ShowcaseText; }
+
+	// 是否允许编辑展示文本
+	UFUNCTION(BlueprintNativeEvent, Category = "Ability")
+	bool IsShowcaseTextEditable() const;
+	virtual bool IsShowcaseTextEditable_Implementation() const { return true; }
+
+	// 获取参数的可选选项
+	UFUNCTION(BlueprintNativeEvent, Category = "Ability")
+	TArray<FName> GetAbilityParamOptions() const;
+	virtual TArray<FName> GetAbilityParamOptions_Implementation() const;
+
 	UFUNCTION(BlueprintPure, Category = "Ability")
-	virtual FText GetShowcaseText() const { return ShowcaseText; }
-
-	UFUNCTION()
-	virtual TArray<FName> GetAbilityParamOptions() const;
-
 	FName GetAbilityParameterName() const;
 };
 
@@ -61,6 +70,8 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameterDetail : publ
 	GENERATED_BODY()
 
 protected:
-	UFUNCTION()
-	virtual TArray<FName> GetAbilityParamOptions() const;
+	// 获取参数的可选选项
+	UFUNCTION(BlueprintNativeEvent, Category = "Ability")
+	TArray<FName> GetAbilityParamOptions() const;
+	virtual TArray<FName> GetAbilityParamOptions_Implementation() const;
 };

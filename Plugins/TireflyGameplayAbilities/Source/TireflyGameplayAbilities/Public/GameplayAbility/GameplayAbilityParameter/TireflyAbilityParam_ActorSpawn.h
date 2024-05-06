@@ -53,6 +53,8 @@ public:
 			"Snap To Target Including Scale"
 		};
 	}
+
+	virtual bool IsShowcaseTextEditable_Implementation() const override { return false; }
 };
 
 

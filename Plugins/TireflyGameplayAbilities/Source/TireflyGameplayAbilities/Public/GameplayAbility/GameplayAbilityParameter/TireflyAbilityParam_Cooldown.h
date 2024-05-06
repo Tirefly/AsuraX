@@ -9,6 +9,7 @@
 #include "TireflyAbilityParam_Cooldown.generated.h"
 
 
+class UTireflyAbilitySystemComponent;
 class UTireflyAbilityParam_Numeric;
 
 
@@ -19,14 +20,20 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CooldownBase : public UT
 	GENERATED_BODY()
 
 public:
+	// 获取冷却时间标签
 	UFUNCTION()
 	virtual const FGameplayTagContainer& GetCooldownTags() const { return FGameplayTagContainer::EmptyContainer; }
-	
-	UFUNCTION()
-	virtual float GetCooldownDuration(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-									  const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-									  const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-									  int32 Level = 1) const
+
+	// 获取冷却时间
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
+	float GetCooldownDuration(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const;
+	virtual float GetCooldownDuration_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+		int32 Level = 1) const
 	{
 		return 0.f;
 	}
@@ -51,8 +58,10 @@ public:
 public:
 	virtual const FGameplayTagContainer& GetCooldownTags() const override { return CooldownTags; }
 
-	virtual float GetCooldownDuration(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-	                                  const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-	                                  const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-	                                  int32 Level = 1) const override;
+	virtual float GetCooldownDuration_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
+		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
+	    const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
+	    int32 Level = 1) const override;
+
+	virtual FText GetShowcaseText_Implementation() const override;
 };

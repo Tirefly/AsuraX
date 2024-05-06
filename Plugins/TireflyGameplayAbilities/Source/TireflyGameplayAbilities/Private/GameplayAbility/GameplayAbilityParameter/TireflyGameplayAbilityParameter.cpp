@@ -24,7 +24,7 @@ UTireflyGameplayAbilityAsset* TireflyAbilityParameterHelper::GetAbilityAsset(con
 	return OuterAsset;
 }
 
-TArray<FName> UTireflyGameplayAbilityParameterBase::GetAbilityParamOptions() const
+TArray<FName> UTireflyGameplayAbilityParameterBase::GetAbilityParamOptions_Implementation() const
 {
 	TArray<FName> OutOptions;
 	if (const UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this))
@@ -59,7 +59,7 @@ FName UTireflyGameplayAbilityParameterBase::GetAbilityParameterName() const
 	return NAME_None;
 }
 
-TArray<FName> UTireflyGameplayAbilityParameterDetail::GetAbilityParamOptions() const
+TArray<FName> UTireflyGameplayAbilityParameterDetail::GetAbilityParamOptions_Implementation() const
 {
 	TArray<FName> OutOptions;
 	if (const UTireflyGameplayAbilityParameter* Param = Cast<UTireflyGameplayAbilityParameter>(GetOuter()))

@@ -6,7 +6,7 @@
 #include "GameplayAbility/TireflyGameplayAbilityAsset.h"
 
 
-FText UTireflyAbilityParam_CommonDescription::GetShowcaseText() const
+FText UTireflyAbilityParam_CommonDescription::GetShowcaseText_Implementation() const
 {
 	const UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this);
 	if (!AbilityAsset)

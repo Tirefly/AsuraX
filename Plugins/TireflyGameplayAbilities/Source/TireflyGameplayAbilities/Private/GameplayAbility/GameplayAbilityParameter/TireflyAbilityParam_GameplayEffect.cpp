@@ -47,7 +47,7 @@ void UTireflyAbilityParam_GameplayEffect::PostEditChangeProperty(FPropertyChange
 	}
 }
 
-FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffect::MakeOutgoingGameplayEffectSpec(
+FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffect::MakeOutgoingGameplayEffectSpec_Implementation(
 	UTireflyAbilitySystemComponent* CasterASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level)
 {
 	if (!GameplayEffect || !CasterASC)
