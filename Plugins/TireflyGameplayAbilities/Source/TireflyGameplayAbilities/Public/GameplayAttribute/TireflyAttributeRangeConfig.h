@@ -17,7 +17,7 @@ enum class ETireflyAttributeRangeType : uint8
 
 // 定义一个游戏性属性的数值范围设置的结构体
 USTRUCT()
-struct FTireflyAttributeRangeConfig
+struct TIREFLYGAMEPLAYABILITIES_API FTireflyAttributeRangeConfig
 {
 	GENERATED_BODY()
 

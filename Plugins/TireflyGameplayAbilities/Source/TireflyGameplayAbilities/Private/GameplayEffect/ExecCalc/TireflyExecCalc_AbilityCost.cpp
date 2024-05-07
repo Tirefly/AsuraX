@@ -3,7 +3,6 @@
 
 #include "GameplayEffect/ExecCalc/TireflyExecCalc_AbilityCost.h"
 
-#include "AbilitySystemComponent.h"
 #include "TireflyAbilitySystemComponent.h"
 #include "GameplayAbility/TireflyGameplayAbility.h"
 #include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_Cost.h"
