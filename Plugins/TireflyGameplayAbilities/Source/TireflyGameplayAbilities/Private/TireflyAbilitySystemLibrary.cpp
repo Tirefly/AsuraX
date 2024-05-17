@@ -38,8 +38,8 @@ UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamO
 		return nullptr;
 	}
 	
-	UTireflyGameplayAbilityParameter* OutParameter =  AbilityClass->GetDefaultObject<UTireflyGameplayAbility>()->GetAbilityAssetParameter(Parameter);
-	Success = OutParameter != nullptr ? true : false;
+	auto OutParameter =  AbilityClass->GetDefaultObject<UTireflyGameplayAbility>()->GetAbilityParameter<UTireflyGameplayAbilityParameter>(Parameter);
+	Success = (OutParameter != nullptr) ? true : false;
 	return OutParameter;
 }
 

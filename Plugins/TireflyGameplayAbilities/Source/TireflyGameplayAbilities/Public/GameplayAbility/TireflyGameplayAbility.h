@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "TireflyGameplayAbilityAsset.h"
 #include "TireflyGameplayAbility.generated.h"
 
 
 class UTireflyGameplayAbilityParameter;
 class UTireflyAbilityParam_CostBase;
-class UTireflyGameplayAbilityAsset;
 
 
 /**
@@ -41,13 +41,23 @@ protected:
 	
 public:
 	// 获取能力资产
-	UFUNCTION(BlueprintCallable, Category = Ability)
-	UTireflyGameplayAbilityAsset* GetAbilityAsset() const { return AbilityAsset; }
+	UFUNCTION(BlueprintCallable, Category = Ability, Meta = (DisplayName = "Get Ability Asset"))
+	UTireflyGameplayAbilityAsset* K2_GetAbilityAsset() const { return AbilityAsset.Get(); }
 
-	// 获取指定名称的能力参数
-	UFUNCTION(BlueprintCallable, Category = Ability)
-	UTireflyGameplayAbilityParameter* GetAbilityAssetParameter(
-		UPARAM(Meta = (GetParamOptions = "GetAbilityParamOptions"))FName ParamName) const;
+	// 获取能力资产
+	template<class T>
+	T* GetAbilityAsset() const { return Cast<T>(AbilityAsset.Get()); }
+
+	template<class T>
+	T* GetAbilityParameter(FName ParamName) const
+	{
+		if (AbilityAsset)
+		{
+			return Cast<T>(AbilityAsset->AbilityParameters.FindRef(ParamName));
+		}
+
+		return nullptr;
+	}
 
 protected:
 	// 能力的唯一标识

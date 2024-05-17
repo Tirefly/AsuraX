@@ -31,39 +31,30 @@ TSharedPtr<SGraphPin> FTireflyNameOptionPinFactory::CreatePin(UEdGraphPin* InPin
 	}
 
 	UObject* OwningObject = nullptr;
-    // 处理具有命名空间的函数名
+	UFunction* FuncToExec = nullptr;
+    // 处理静态函数
 	if (PinOptionFunctionName.Contains(TEXT(".")))
 	{
-		FString ClassName;
-		FString FunctionName;
-		PinOptionFunctionName.Split(TEXT("."), &ClassName, &FunctionName
-			, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-
-		if (const UClass* Class = StaticLoadClass(UObject::StaticClass(), nullptr, *ClassName))
+		FuncToExec = FindObject<UFunction>(nullptr, *PinOptionFunctionName, true);
+		if (FuncToExec)
 		{
-			OwningObject = Class->GetDefaultObject();
-			PinOptionFunctionName = FunctionName;
+			OwningObject = FuncToExec->GetOuterUClass()->GetDefaultObject();
 		}
 	}
 	else
-    // 处理蓝图定义的默认对象
+    // 处理默认函数
 	{
 		if (const UBlueprint* OwningBlueprint = CallFunctionNode->GetBlueprint())
 		{
 			if (OwningBlueprint->GeneratedClass)
 			{
 				OwningObject = OwningBlueprint->GeneratedClass->GetDefaultObject();
+				FuncToExec = OwningObject->FindFunction(FName(*PinOptionFunctionName));
 			}
 		}
 	}
-	if (!OwningObject)
-	{
-		return nullptr;
-	}
-
-    // 查找要执行的函数
-	UFunction* FuncToExec = OwningObject->FindFunction(FName(*PinOptionFunctionName));
-	if (!FuncToExec)
+	
+	if (!OwningObject || !FuncToExec)
 	{
 		return nullptr;
 	}

@@ -37,11 +37,13 @@ public:
 	{
 		return 0.f;
 	}
+
+	virtual bool IsShowcaseTextEditable_Implementation() const override { return false; }
 };
 
 
 // GameplayAbility通用的冷却时间参数
-UCLASS(DisplayName = "Common Cooldown")
+UCLASS(DisplayName = "Generic Cooldown")
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CommonCooldown : public UTireflyAbilityParam_CooldownBase
 {
 	GENERATED_BODY()

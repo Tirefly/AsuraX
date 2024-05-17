@@ -9,7 +9,12 @@
 #include "Kismet/KismetMathLibrary.h"
 
 
-float UTireflyAbilityParam_CommonCost::GetCostValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
+void UTireflyAbilityParam_CostBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
+
+float UTireflyAbilityParam_GenericCost::GetCostValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
 	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
 {
 	if (CostValue)
@@ -20,7 +25,7 @@ float UTireflyAbilityParam_CommonCost::GetCostValue_Implementation(const UTirefl
 	return 0.f;
 }
 
-bool UTireflyAbilityParam_CommonCost::CheckCost_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
+bool UTireflyAbilityParam_GenericCost::CheckCost_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
 	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
 {
 	if (!CasterASC)
@@ -57,7 +62,7 @@ bool UTireflyAbilityParam_CommonCost::CheckCost_Implementation(const UTireflyAbi
 	return UKismetMathLibrary::InRange_FloatFloat(OldCostedValue, CostRange.X, CostRange.Y);
 }
 
-FText UTireflyAbilityParam_CommonCost::GetShowcaseText_Implementation() const
+FText UTireflyAbilityParam_GenericCost::GetShowcaseText_Implementation() const
 {
 	if (CostValue)
 	{

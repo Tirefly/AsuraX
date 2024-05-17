@@ -54,16 +54,6 @@ TArray<FName> UTireflyGameplayAbility::GetAbilityParamOptions() const
 	return OutOptions;
 }
 
-UTireflyGameplayAbilityParameter* UTireflyGameplayAbility::GetAbilityAssetParameter(FName ParamName) const
-{
-	if (AbilityAsset)
-	{
-		return AbilityAsset->AbilityParameters.FindRef(ParamName);
-	}
-
-	return nullptr;
-}
-
 const FGameplayTagContainer* UTireflyGameplayAbility::GetCooldownTags() const
 {
 	if (AbilityAsset)

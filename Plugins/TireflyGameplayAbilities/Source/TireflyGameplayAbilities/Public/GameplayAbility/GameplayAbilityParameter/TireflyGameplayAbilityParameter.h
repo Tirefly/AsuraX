@@ -25,7 +25,7 @@ enum class ETireflyAbilityParamSourceType : uint8
 
 
 UCLASS(Abstract, CollapseCategories, BlueprintType, Blueprintable, DefaultToInstanced, EditInlineNew)
-class UTireflyGameplayAbilityParameterBase : public UObject
+class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameterBase : public UObject
 {
 	GENERATED_BODY()
 

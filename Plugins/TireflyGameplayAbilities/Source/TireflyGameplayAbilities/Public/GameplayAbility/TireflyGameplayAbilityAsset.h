@@ -81,7 +81,7 @@ public:
 
 public:
 	// 能力的参数设置
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = AbilityParameters)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityParameters)
 	TMap<FName, class UTireflyGameplayAbilityParameter*> AbilityParameters;
 
 #pragma endregion

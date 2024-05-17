@@ -20,6 +20,10 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CostBase : public UTiref
 	GENERATED_BODY()
 
 public:
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;	
+#endif
+	
 	// 获取花费的属性
 	UFUNCTION(BlueprintPure, Category = "Ability")
 	virtual FGameplayAttribute GetCostAttribute() const { return FGameplayAttribute(nullptr); }
@@ -55,12 +59,14 @@ public:
 	{
 		return true;
 	}
+
+	virtual bool IsShowcaseTextEditable_Implementation() const override { return false; }
 };
 
 
 // GameplayAbility通用的花费设置
-UCLASS(DisplayName = "Common Cost")
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CommonCost : public UTireflyAbilityParam_CostBase
+UCLASS(DisplayName = "Generic Cost")
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GenericCost : public UTireflyAbilityParam_CostBase
 {
 	GENERATED_BODY()
 
