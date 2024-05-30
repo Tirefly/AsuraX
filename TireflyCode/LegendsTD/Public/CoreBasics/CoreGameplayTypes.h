@@ -329,30 +329,6 @@ public:
 
 #pragma region CombatProjectile
 
-// 战斗投射物的定义结构
-USTRUCT(BlueprintType)
-struct FCombatProjectileDefinition
-{
-	GENERATED_BODY()
-
-public:
-	/** 抛射物的类型 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<ACombatProjectile> ProjectileClass = nullptr;
-
-	/** 抛射物的类型 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FName ProjectileID = NAME_None;
-
-	/** 抛射物的外观 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FCombatExtraSkin ProjectileSkin = FCombatExtraSkin();
-
-	/** 抛射物的特效 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<int32> EffectsToTarget = TArray<int32>{};
-};
-
 // 战斗投射物的效果结构
 USTRUCT(BlueprintType)
 struct FCombatProjectileEffect
@@ -389,50 +365,6 @@ public:
 
 
 #pragma region CombatDomain
-
-// 战斗领域的定义结构
-USTRUCT(BlueprintType)
-struct FCombatDomainDefinition
-{
-	GENERATED_BODY()
-
-public:
-	/** 领域的类型 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TSubclassOf<ACombatDomain> DomainClass = nullptr;
-
-	/** 领域的类型 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FName DomainID = NAME_None;
-
-	/** 领域的模型 */
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FCombatExtraSkin DomainSkin = FCombatExtraSkin();
-
-	// 领域会施加给敌方单位的效果（敌方单位进入领域时）
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<int32> EffectsToEnemiesOnEnter = TArray<int32>{};
-
-	// 领域会施加给敌方单位的效果（敌方单位离开领域时）
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<int32> EffectsToEnemiesOnExit = TArray<int32>{};
-
-	// 领域会施加给敌方单位的效果（领域将被销毁时）
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<int32> EffectsToEnemiesOnDestruction = TArray<int32>{};
-
-	// 领域会施加给友方单位的效果（友方单位进入领域时）
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<int32> EffectsToAlliesOnEnter = TArray<int32>{};
-
-	// 领域会施加给友方单位的效果（友方单位离开领域时）
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<int32> EffectsToAlliesOnExit = TArray<int32>{};
-
-	// 领域会施加给友方单位的效果（领域将被销毁时）
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TArray<int32> EffectsToAlliesOnDestruction = TArray<int32>{};
-};
 
 // 战斗领域的实时结构
 USTRUCT(BlueprintType)

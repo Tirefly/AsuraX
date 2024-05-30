@@ -50,7 +50,8 @@ void UCoreGameInstance::HandleCombatUnitBuildersLoaded(TArray<FPrimaryAssetId> A
 			continue;
 		}
 
-		UKismetSystemLibrary::PrintString(this, BuilderCU->GetPrimaryAssetId().ToString(), true, true, FLinearColor::Black, 15);
+		UKismetSystemLibrary::PrintString(this, BuilderCU->GetPrimaryAssetId().ToString(),
+			true, true, FLinearColor::Black, 15);
 
 		// 检测构建器核心数据是否有效
 		if (!BuilderCU->CoreBuilderData.IsValid())
@@ -91,6 +92,7 @@ void UCoreGameInstance::HandleCombatUnitBuildersLoaded(TArray<FPrimaryAssetId> A
 					break;
 			}
 
+			HeroBuilders.Add(BuilderCU->GetPrimaryAssetId().PrimaryAssetName, BuilderCU);
 			continue;
 		}
 

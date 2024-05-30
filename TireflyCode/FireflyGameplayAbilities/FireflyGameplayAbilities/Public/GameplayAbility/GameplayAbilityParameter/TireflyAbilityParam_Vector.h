@@ -15,10 +15,10 @@ class FIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_Vector : public UTirefly
 
 public:
 	// 向量技能参数值
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector ParamValue;
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	FVector GetParamValue() const { return ParamValue; }
 };

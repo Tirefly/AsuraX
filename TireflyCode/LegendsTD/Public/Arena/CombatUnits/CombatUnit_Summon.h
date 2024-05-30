@@ -17,7 +17,7 @@ class LEGENDSTD_API ACombatUnit_Summon : public ACombatUnitBase
 
 public:
 	UFUNCTION(BlueprintCallable, Category = CombatUnit)
-	virtual void InitOnSummoned(UAbilitySystemComponent* OwnerASC, float InitCoefficient);
+	virtual void InitOnSummoned(UAbilitySystemComponent* OwnerASC, float InitCoefficient, float Lifetime = -1.f);
 
 public:
 	// 召唤物主人的能力系统组件

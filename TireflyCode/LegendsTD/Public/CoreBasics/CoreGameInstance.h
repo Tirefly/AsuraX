@@ -50,6 +50,10 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Legend")
 	TMap<FName, ULegendBuilder_CombatUnit*> GoldHeroBuilders;
 
+	// 金色英雄构建器
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Legend")
+	TMap<FName, ULegendBuilder_CombatUnit*> HeroBuilders;
+
 	// 首领单位构建器
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Legend")
 	TMap<FName, ULegendBuilder_CombatUnit*> BossBuilders;

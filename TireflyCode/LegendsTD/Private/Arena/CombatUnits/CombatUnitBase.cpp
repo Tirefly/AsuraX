@@ -20,7 +20,6 @@
 #include "BrainComponent.h"
 #include "FireflyGridMapBase.h"
 #include "FireflyGridMovementComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "FireflyObjectPoolWorldSubsystem.h"
 
 #include "Arena/GameFramework/ArenaGameMode.h"
@@ -164,6 +163,16 @@ void ACombatUnitBase::InitializeCombatUnit(FName InCombatUnitID)
 
 	CombatUnitID = InCombatUnitID;
 	CombatUnitType = BuilderData->CombatUnitType;
+
+	InitializeCombatUnitSkin();
+	ToggleNormalAttackAbility(true);
+	ToggleSkillAbilitiesLearningState(true);
+	PerformUpgradeOperation();
+
+	ToggleAliveState(true);
+	ToggleCollision(true);
+	ToggleVisibility(true);
+	DeathGrid = nullptr;
 }
 
 ULegendBuilder_CombatUnit* ACombatUnitBase::GetCombatUnitBuilder() const
@@ -785,10 +794,31 @@ void ACombatUnitBase::RemoveActiveCombatEffects() const
 
 void ACombatUnitBase::HandleRecycled()
 {
-	if (const UFireflyObjectPoolWorldSubsystem* SubsystemOP = GetWorld()->GetSubsystem<UFireflyObjectPoolWorldSubsystem>())
-	{
-		SubsystemOP->ActorPool_ReleaseActor(this);
-	}
+	// if (const UFireflyObjectPoolWorldSubsystem* SubsystemOP = GetWorld()->GetSubsystem<UFireflyObjectPoolWorldSubsystem>())
+	// {
+	// 	SubsystemOP->ActorPool_ReleaseActor(this);
+	// }
+
+	SetCurrentGrade(0);
+	SetCurrentAlliance(nullptr);
+	SetCurrentMovementGrid(nullptr);
+	ToggleAliveLocation(false);
+	ToggleSynergy(false);
+	ToggleBrainLogic(false);
+	ToggleCollision(false);
+	ToggleVisibility(false);
+
+	ResetGameplayAttributeValues();
+	ToggleNormalAttackAbility(false);
+	ToggleSkillAbilitiesLearningState(false);
+	RemoveSkillAbilities();
+	RemoveActiveCombatEffects();
+
+	CombatUnitBuilder = nullptr;
+	DeathGrid = nullptr;
+	CombatUnitID = NAME_None;
+
+	Destroy();
 }
 
 void ACombatUnitBase::HandleGameStageUpdated(ELegendGameStage NewGameStage, ELegendGameStage OldGameStage)
@@ -847,15 +877,6 @@ void ACombatUnitBase::PoolingBeginPlay_Implementation()
 	BackToOriginAlliance();
 	
 	InitializeCombatUnit(CombatUnitID);
-	InitializeCombatUnitSkin();
-	ToggleNormalAttackAbility(true);
-	ToggleSkillAbilitiesLearningState(true);
-	PerformUpgradeOperation();
-
-	ToggleAliveState(true);
-	ToggleCollision(true);
-	ToggleVisibility(true);
-	DeathGrid = nullptr;
 }
 
 void ACombatUnitBase::PoolingEndPlay_Implementation()

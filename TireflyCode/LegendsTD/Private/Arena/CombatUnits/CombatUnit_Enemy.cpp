@@ -3,7 +3,9 @@
 
 #include "Arena/CombatUnits/CombatUnit_Enemy.h"
 
+#include "Arena/GameFramework/ArenaGameMode.h"
 #include "CoreBasics/CoreGameplayTag.h"
+#include "Libraries/LegendSystemLibrary.h"
 
 
 bool ACombatUnit_Enemy::CanBeTargeted(ACombatUnitBase* Opponent) const
@@ -14,7 +16,13 @@ bool ACombatUnit_Enemy::CanBeTargeted(ACombatUnitBase* Opponent) const
 void ACombatUnit_Enemy::InitOnRespawned(APawn* InInstigator, UFireflyGridBase* Grid)
 {
     Super::InitOnRespawned(InInstigator, Grid);
-    HandleStartedBattle();
+	if (const AArenaGameMode* ArenaGM = ULegendSystemLibrary::GetArenaGameMode(this))
+	{
+		if (ArenaGM->GetCurrentGameStage() == ELegendGameStage::InBattle)
+		{
+			HandleStartedBattle();
+		}
+	}
 	
     // 定义一个lambda函数用于处理进入准备战斗状态
 	auto RespawnLambda = [this]()

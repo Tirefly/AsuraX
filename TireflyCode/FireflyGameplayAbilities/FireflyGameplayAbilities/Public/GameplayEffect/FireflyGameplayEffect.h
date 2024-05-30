@@ -51,9 +51,9 @@ public:
 #pragma region GameplayEffect_SetByCaller
 
 protected:
-	void ProcessDurationSetByCaller();
+	bool ProcessDurationSetByCaller();
 	
-	void ProcessModiferSetByCaller();
+	bool ProcessModiferSetByCaller();
 
 #pragma endregion
 

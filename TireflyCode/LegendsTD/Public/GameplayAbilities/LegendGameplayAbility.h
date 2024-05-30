@@ -43,6 +43,9 @@ public:
 
 #pragma region GameplayAbility_DataAsset
 
+public:
+	virtual void GetAbilityParamInfo(FTireflyAbilityParamInfo& ParamInfo) override;
+
 protected:
 	void LoadGameplayAbilityAsset();
 
@@ -55,20 +58,4 @@ protected:
 	virtual void OnAbilityGranted_Implementation() override;
 
 #pragma endregion
-
-
-// #pragma region GameplayAbility_CombatExtra
-//
-// public:
-// 	// 动态构建战斗抛射物的实时结构
-// 	UFUNCTION(BlueprintCallable, Category = CombatExtra)
-// 	bool ConstructProjectileRuntimeFromConfig(TSubclassOf<ACombatProjectile>& ProjectileClass, FName& ProjectileID
-// 		, FCombatExtraSkin& ProjectileSkin, FCombatProjectileEffect& ProjectileEffect, int32 Index);
-//
-// 	// 动态构建战斗领域的实时结构
-// 	UFUNCTION(BlueprintCallable, Category = CombatExtra)
-// 	bool ConstructDomainRuntimeFromConfig(TSubclassOf<ACombatDomain>& DomainClass, FName& DomainID
-// 		, FCombatExtraSkin& DomainSkin, FCombatDomainEffect& DomainEffect, int32 Index);
-//
-// #pragma endregion
 };

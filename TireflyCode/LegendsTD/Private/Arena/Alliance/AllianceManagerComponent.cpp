@@ -12,6 +12,7 @@
 #include "DataAsset/LegendBuilder_CombatUnit.h"
 
 #include "FireflyObjectPoolWorldSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "Libraries/LegendSystemLibrary.h"
 
 
@@ -191,13 +192,6 @@ bool UAllianceManagerComponent::HandleTryBuyHero(const ULegendBuilder_CombatUnit
 		return false;
 	}
 
-	// 获取对象池子系统
-	const auto SubsystemOP = GetWorld()->GetSubsystem<UFireflyObjectPoolWorldSubsystem>();
-	if (!IsValid(SubsystemOP))
-	{
-		return false;
-	}
-
 	// 获取英雄核心数据
 	const auto HeroCoreData = CombatUnitBuilder->CoreBuilderData.GetPtr<FHeroBuilderData>();
 	if (!HeroCoreData)
@@ -246,6 +240,13 @@ bool UAllianceManagerComponent::HandleTryBuyHero(const ULegendBuilder_CombatUnit
 		}
 	}
 
+	// // 获取对象池子系统
+	// const auto SubsystemOP = GetWorld()->GetSubsystem<UFireflyObjectPoolWorldSubsystem>();
+	// if (!IsValid(SubsystemOP))
+	// {
+	// 	return false;
+	// }
+
 	// 尝试放置英雄到备战席上
 	for (const auto Grid : Auditorium->GridsOfMap)
 	{
@@ -261,11 +262,21 @@ bool UAllianceManagerComponent::HandleTryBuyHero(const ULegendBuilder_CombatUnit
 
 		// 生成英雄
 		const FTransform SpawnTransform = Grid.Value->WorldTransform;
+
+		/*// 对象池生成
 		ACombatUnit_Hero* NewHero = SubsystemOP->ActorPool_SpawnActor<ACombatUnit_Hero>(GameModeConfig->HeroBaseClass
 			, CombatUnitBuilder->GetPrimaryAssetId().PrimaryAssetName, SpawnTransform, -1.f
-			, nullptr, GetOwnerControlledPawn());
-		// 把英雄放到座位中
-		NewHero->SetCurrentMovementGrid(Grid.Value);
+			, nullptr, nullptr);
+		// 初始化英雄的阵营和座位
+		NewHero->InitOnRespawned(GetOwnerControlledPawn(), Grid.Value);*/
+
+		ACombatUnit_Hero* NewHero = GetWorld()->SpawnActorDeferred<ACombatUnit_Hero>(GameModeConfig->HeroBaseClass,
+			SpawnTransform, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		UGameplayStatics::FinishSpawningActor(NewHero, SpawnTransform);
+		// 初始化英雄ID
+		NewHero->InitializeCombatUnit(CombatUnitBuilder->GetPrimaryAssetId().PrimaryAssetName);
+		// 初始化英雄的阵营和座位
+		NewHero->InitOnRespawned(GetOwnerControlledPawn(), Grid.Value);
 		
 		// 扣钱
 		ConsumeMoney(GameModeConfig->GetHeroPurchasePrice(HeroCoreData->Rarity));
@@ -379,6 +390,88 @@ bool UAllianceManagerComponent::HandleHeroPlacedInGrid(ACombatUnit_Hero* Hero, U
 	// 换座位
 	HandleHeroLeavePopulation(HeroLeaved);
 	HandleHeroOccupyPopulation(HeroOccupied);
+	AnotherHero->SetCurrentMovementGrid(nullptr);
+	Hero->SetCurrentMovementGrid(NewGrid);
+	AnotherHero->SetCurrentMovementGrid(CurrentGrid);
+
+	return true;
+}
+
+ACombatUnit_Hero* UAllianceManagerComponent::HandleCreateHero_Debug(const ULegendBuilder_CombatUnit* CombatUnitBuilder)
+{
+	if (!IsValid(CombatUnitBuilder) || !IsValid(GameModeConfig) || !IsValid(GetOwnerControlledPawn())
+		|| !GetValid(Battlefield) || !GetValid(Auditorium))
+	{
+		return nullptr;
+	}
+
+	// 获取英雄核心数据
+	const auto HeroCoreData = CombatUnitBuilder->CoreBuilderData.GetPtr<FHeroBuilderData>();
+	if (!HeroCoreData)
+	{
+		return nullptr;
+	}
+
+	// 获取英雄类
+	if (!IsValid(GameModeConfig->HeroBaseClass))
+	{
+		return nullptr;
+	}
+
+	// 生成英雄
+	const FTransform SpawnTransform = FTransform(FVector(0.f, 0.f, 15000.f));
+
+	/*// 获取对象池子系统
+	const auto SubsystemOP = GetWorld()->GetSubsystem<UFireflyObjectPoolWorldSubsystem>();
+	if (!IsValid(SubsystemOP))
+	{
+		return nullptr;
+	}
+	
+	// 对象池生成
+	ACombatUnit_Hero* NewHero = SubsystemOP->ActorPool_SpawnActor<ACombatUnit_Hero>(GameModeConfig->HeroBaseClass
+		, CombatUnitBuilder->GetPrimaryAssetId().PrimaryAssetName, SpawnTransform, -1.f
+		, nullptr, nullptr);
+	// 初始化英雄的阵营和座位
+	NewHero->InitOnRespawned(GetOwnerControlledPawn(), Grid.Value);*/
+
+	ACombatUnit_Hero* NewHero = GetWorld()->SpawnActorDeferred<ACombatUnit_Hero>(GameModeConfig->HeroBaseClass,
+		SpawnTransform, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	UGameplayStatics::FinishSpawningActor(NewHero, SpawnTransform);
+	// 初始化英雄ID
+	NewHero->InitializeCombatUnit(CombatUnitBuilder->GetPrimaryAssetId().PrimaryAssetName);
+	// 初始化英雄的阵营和座位
+	NewHero->InitOnRespawned(GetOwnerControlledPawn(), nullptr);
+
+	return NewHero;
+}
+
+bool UAllianceManagerComponent::HandleHeroPlacedInGrid_Debug(ACombatUnit_Hero* Hero, UFireflyGridBase* NewGrid)
+{
+	if (!IsValid(Hero) || !IsValid(NewGrid))
+	{
+		return false;
+	}
+
+	UFireflyGridBase* CurrentGrid = Hero->GetCurrentMovementGrid();
+	ACombatUnit_Hero* AnotherHero = NewGrid->ActorsInGrid.Num() > 0
+		? Cast<ACombatUnit_Hero>(NewGrid->ActorsInGrid[0]) : nullptr;
+
+	if (NewGrid == CurrentGrid)
+	{
+		Hero->SetTransformToCurrentGrid();
+		return true;
+	}
+
+	// 换区域，但是不存在另一个英雄
+	if (!IsValid(AnotherHero))
+	{
+		HandleHeroLeavePopulation(Hero);
+		Hero->SetCurrentMovementGrid(NewGrid);
+		return true;
+	}
+
+	// 换座位
 	AnotherHero->SetCurrentMovementGrid(nullptr);
 	Hero->SetCurrentMovementGrid(NewGrid);
 	AnotherHero->SetCurrentMovementGrid(CurrentGrid);

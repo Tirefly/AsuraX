@@ -146,6 +146,17 @@ public:
 	static float GetPriceDealingInEquipment(bool IsBuy);
 
 #pragma endregion
+
+
+#pragma region CombatUnit
+
+public:
+	// 通用的生成召唤物
+	UFUNCTION(BlueprintCallable, Category = Alliance, meta = (WorldContext = "WorldContext"))
+	static class ACombatUnit_Summon* GenericSpawnSummon(const UObject* WorldContext, FName SummonID,
+		AActor* SummonOwner, float InitCoefficient, float Lifetime = -1.f);
+
+#pragma endregion
 };
 
 template <class T>

@@ -389,9 +389,6 @@ public:
 	// Actor被放回对象池中后执行的EndPlay。
 	virtual void PoolingEndPlay_Implementation() override;
 
-	// Actor从对象池中生成后等待使用执行的WarmUp。
-	virtual void PoolingWarmUp_Implementation() override {}
-
 	// 获取Actor的ID。
 	virtual FName PoolingGetActorID_Implementation() const override { return CombatUnitID; }
 

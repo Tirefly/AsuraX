@@ -21,15 +21,15 @@ class FIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CostBase : public UTiref
 
 public:
 	// 获取花费的属性
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	virtual FGameplayAttribute GetCostAttribute() const { return FGameplayAttribute(nullptr); }
 
 	// 获取属性的修改方式
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	virtual TEnumAsByte<EGameplayModOp::Type> GetModifierOp() const { return EGameplayModOp::Additive; }
 
 	// 获取花费的数值
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	float GetCostValue(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const;
 	virtual float GetCostValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const
 	{
@@ -37,7 +37,7 @@ public:
 	}
 
 	// 检查是否满足花费
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	bool CheckCost(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const;
 	virtual bool CheckCost_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const
 	{

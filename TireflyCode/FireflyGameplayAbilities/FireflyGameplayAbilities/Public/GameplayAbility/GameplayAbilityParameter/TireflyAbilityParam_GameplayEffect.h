@@ -21,7 +21,7 @@ class FIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GameplayEffectBase : pub
 
 public:
 	// 创建GameplayEffectSpec
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = Ability)
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo());
 	virtual FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo())
 	{
@@ -73,6 +73,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (EditCondition = "IsEffectNotInstant", EditConditionHides))
 	UTireflyAbilityParam_Numeric* StackToApply = nullptr;
 
+	// GameplayEffect的动态AssetTags
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTagContainer AssetTags;
+
+	// GameplayEffect的动态GrantedTags
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTagContainer GrantedTags;
+
 	// GameplayEffect的SetByCallerModifier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<class UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier*> SetByCallerModifiers;
@@ -121,7 +129,7 @@ public:
 
 public:
 	// 为GameplayEffectSpec修改或添加SetByCallerModifier
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = GameplayEffect, Meta = (ForceAsFunction))
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Meta = (ForceAsFunction))
 	void AssignSetByCallerModifier(UPARAM(ref)FGameplayEffectSpecHandle& Spec,
 		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo());
 	virtual void AssignSetByCallerModifier_Implementation(UPARAM(ref)FGameplayEffectSpecHandle& EffectSpecHandle,
@@ -176,7 +184,7 @@ class FIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParamDetail_GameplayEffect_Con
 
 public:
 	// 修改GameplayEffectContext
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = GameplayEffect, Meta = (ForceAsFunction))
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Meta = (ForceAsFunction))
 	void ModifyGameplayEffectContext(UPARAM(ref)FGameplayEffectContextHandle& Context,
 		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo());
 	virtual void ModifyGameplayEffectContext_Implementation(UPARAM(ref)FGameplayEffectContextHandle& Context,

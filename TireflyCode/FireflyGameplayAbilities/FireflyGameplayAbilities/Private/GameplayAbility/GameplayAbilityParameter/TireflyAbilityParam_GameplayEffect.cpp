@@ -125,6 +125,11 @@ FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffect::MakeOutgoingGamep
 	EffectSpecHandle.Data->Period = PeriodTime ? PeriodTime->GetParamValue(ParamInfo) : 0.f;
 	// Set the stack count
 	EffectSpecHandle.Data->StackCount = StackToApply ? StackToApply->GetParamValue(ParamInfo) : 1.f;
+
+	// Set the dynamic tag of GameplayEffectSpec
+	EffectSpecHandle.Data->AppendDynamicAssetTags(AssetTags);
+	EffectSpecHandle.Data->DynamicGrantedTags = GrantedTags;
+	
 	// Set the set by caller magnitudes
 	for (UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier* SetByCaller : SetByCallerModifiers)
 	{

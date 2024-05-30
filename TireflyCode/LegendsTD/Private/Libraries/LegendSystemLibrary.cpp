@@ -4,6 +4,7 @@
 #include "Libraries/LegendSystemLibrary.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemGlobals.h"
 #include "Arena/GameFramework/ArenaGameMode.h"
 #include "Arena/GameFramework/ArenaPlayerController.h"
 #include "Arena/GameFramework/ArenaPlayerState.h"
@@ -19,7 +20,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "FireflyAlgorithmLibrary.h"
 #include "FireflyGridMapBase.h"
+#include "FireflyGridMapLibrary.h"
 #include "FireflyGridMovementComponent.h"
+#include "Arena/CombatUnits/CombatUnit_Summon.h"
+#include "DataAsset/LegendConfig_GameMode.h"
 #include "DataAsset/LegendSynergyDataAsset.h"
 #include "GameplayAbilities/LegendAttributeSet.h"
 
@@ -295,4 +299,41 @@ float ULegendSystemLibrary::GetPriceDealingInEquipment(bool IsBuy)
 		OutResult, OutResults);
 
 	return OutResult;
+}
+
+ACombatUnit_Summon* ULegendSystemLibrary::GenericSpawnSummon(const UObject* WorldContext, FName SummonID,
+	AActor* SummonOwner, float InitCoefficient, float Lifetime)
+{
+	UFireflyGridBase* Grid = UFireflyGridMapLibrary::GetNearestVacantGridOfMap(WorldContext, SummonOwner);
+	if (!Grid)
+	{
+		return nullptr;
+	}
+
+	UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull);
+	if (!World)
+	{
+		return nullptr;
+	}
+
+	ULegendConfig_GameMode* ConfigGM = GetGameModeConfig(WorldContext);
+	if (!ConfigGM)
+	{
+		return nullptr;
+	}
+
+	if (!ConfigGM->SummonBaseClass)
+	{
+		return nullptr;
+	}
+
+	ACombatUnit_Summon* OutSummon = World->SpawnActorDeferred<ACombatUnit_Summon>(ConfigGM->SummonBaseClass, Grid->WorldTransform,
+		nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	UGameplayStatics::FinishSpawningActor(OutSummon, Grid->WorldTransform);
+
+	OutSummon->InitializeCombatUnit(SummonID);
+	OutSummon->InitOnRespawned(SummonOwner->GetInstigator(), Grid);
+	OutSummon->InitOnSummoned(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(SummonOwner), InitCoefficient, Lifetime);
+
+	return OutSummon;
 }

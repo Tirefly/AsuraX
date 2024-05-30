@@ -48,11 +48,11 @@ public:
 
 public:
 	// 获取参数值，返回值会经过“CalcMode”处理
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	float GetParamValueCalculated(const float& InParamValue) const;
 	
 	// 获取参数值
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = Ability)
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	float GetParamValue(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const;
 	virtual float GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const
 	{
@@ -161,7 +161,7 @@ public:
 
 public:
 	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	virtual float GetParmaValueAtLevel(int32 Level = 1) const { return 0; }
 };
 

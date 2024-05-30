@@ -24,6 +24,7 @@
 #define GAS_BAN_NORMALATTACK FGameplayTag::RequestGameplayTag("GAS.Ban.NormalAttack")//游戏性能力系统Tag：禁止单位行为-普通攻击
 #define GAS_COMBATUNITSTATE FGameplayTag::RequestGameplayTag("GAS.CombatUnitState")//游戏性能力系统Tag：战斗单位状态
 #define GAS_COMBATUNITSTATE_DEATH FGameplayTag::RequestGameplayTag("GAS.CombatUnitState.Death")//游戏性能力系统Tag：战斗单位状态 -死亡
+#define GAS_COMBATUNITSTATE_STUNNED FGameplayTag::RequestGameplayTag("GAS.CombatUnitState.Stunned")//游戏性能力系统Tag：战斗单位状态 -被眩晕
 #define GAS_COMBATUNITSTATE_INVINCIBLE FGameplayTag::RequestGameplayTag("GAS.CombatUnitState.Invincible")//游戏性能力系统Tag：战斗单位状态 -无敌
 #define GAS_COMBATUNITSTATE_INFINITEGRADE FGameplayTag::RequestGameplayTag("GAS.CombatUnitState.InfiniteGrade")//游戏性能力系统Tag：战斗单位状态-无限升级
 #define GAS_COMBATUNITSTATE_MELEENOLIMIT FGameplayTag::RequestGameplayTag("GAS.CombatUnitState.MeleeNoLimit")//游戏性能力系统Tag：战斗单位状态-近战普通攻击无目标限制

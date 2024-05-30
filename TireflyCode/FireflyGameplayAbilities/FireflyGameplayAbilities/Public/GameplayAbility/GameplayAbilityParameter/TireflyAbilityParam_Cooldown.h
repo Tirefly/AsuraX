@@ -25,7 +25,7 @@ public:
 	virtual const FGameplayTagContainer& GetCooldownTags() const { return FGameplayTagContainer::EmptyContainer; }
 
 	// 获取冷却时间
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	float GetCooldownDuration(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const;
 	virtual float GetCooldownDuration_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const
 	{

@@ -72,6 +72,16 @@ void UFireflyGameplayAbility::GetAbilityParamInfo(FTireflyAbilityParamInfo& Para
 	ParamInfo.AbilityHandle = GetCurrentAbilitySpecHandle();
 }
 
+int32 UFireflyGameplayAbility::GetCasterLevel() const
+{
+	if (auto ASC = Cast<UFireflyAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()))
+	{
+		return ASC->GetAbilityCasterLevel();
+	}
+
+	return 1;
+}
+
 void UFireflyGameplayAbility::OnAbilityGranted_Implementation()
 {
 	if (!IsInstantiated() || !IsValid(GetCurrentSourceObject()))

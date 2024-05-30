@@ -224,7 +224,7 @@ protected:
 #pragma endregion
 
 
-#pragma region HeroMgr
+#pragma region HeroMgr_Gameplay
 
 public:
 	// 处理玩家尝试购买英雄的逻辑
@@ -236,13 +236,27 @@ public:
 	bool HandleTrySellHero(ACombatUnit_Hero* Hero);
 
 	// 处理英雄被放置在棋格座位的逻辑
-	UFUNCTION(BlueprintCallable, Category = Game)
+	UFUNCTION(BlueprintCallable, Category = Alliance)
 	bool HandleHeroPlacedInGrid(ACombatUnit_Hero* Hero, UFireflyGridBase* NewGrid);
 
 protected:
 	// 该玩家管理的英雄单位
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<ACombatUnit_Hero>> Heroes;
+
+#pragma endregion
+
+
+#pragma region HeroMgr_Debug
+
+public:
+	// 处理创建用于调试的英雄的逻辑
+	UFUNCTION(BlueprintCallable, Category = Debug)
+	ACombatUnit_Hero* HandleCreateHero_Debug(const ULegendBuilder_CombatUnit* CombatUnitBuilder);
+
+	// 处置英雄被放置在棋格座位用于调试的逻辑
+	UFUNCTION(BlueprintCallable, Category = Debug)
+	bool HandleHeroPlacedInGrid_Debug(ACombatUnit_Hero* Hero, UFireflyGridBase* NewGrid);
 
 #pragma endregion
 };

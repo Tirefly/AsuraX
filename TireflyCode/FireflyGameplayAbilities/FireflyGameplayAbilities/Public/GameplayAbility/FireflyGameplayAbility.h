@@ -82,7 +82,10 @@ public:
 
 	// 获取该能力的Caster数据
 	UFUNCTION(BlueprintPure, Category = Ability)
-	void GetAbilityParamInfo(FTireflyAbilityParamInfo& ParamInfo);
+	virtual void GetAbilityParamInfo(FTireflyAbilityParamInfo& ParamInfo);
+
+	UFUNCTION(BlueprintPure, Category = Ability)
+	virtual int32 GetCasterLevel() const;
 
 protected:
 	// 能力的唯一标识
@@ -90,7 +93,7 @@ protected:
 	FName AbilityId;
 
 	// 能力的数据资产路径，用于Debug确认能力是否绑定了能力数据资产
-	UPROPERTY(VisibleAnywhere, Category = Ability)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability)
 	FString AbilityAssetPath;
 	
 	// 游戏性能力的数据资产

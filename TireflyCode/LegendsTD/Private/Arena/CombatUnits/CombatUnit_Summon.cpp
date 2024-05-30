@@ -11,7 +11,7 @@
 #include "Libraries/LegendSystemLibrary.h"
 
 
-void ACombatUnit_Summon::InitOnSummoned(UAbilitySystemComponent* OwnerASC, float InitCoefficient)
+void ACombatUnit_Summon::InitOnSummoned(UAbilitySystemComponent* OwnerASC, float InitCoefficient, float Lifetime)
 {
 	if (!IsValid(OwnerASC) || InitCoefficient == 0.f)
 	{
@@ -33,6 +33,12 @@ void ACombatUnit_Summon::InitOnSummoned(UAbilitySystemComponent* OwnerASC, float
 	// 设置一个计时器，1秒后再次调用RespawnLambda函数，设置为非无敌状态
 	FTimerHandle RespawnTimer;
 	GetWorldTimerManager().SetTimer(RespawnTimer, this, &ACombatUnit_Summon::HandleStartedBattle, 0.5f, false);
+
+	if (Lifetime > 0.f)
+	{
+		FTimerHandle LifetimeTimer;
+		GetWorldTimerManager().SetTimer(LifetimeTimer, this, &ACombatUnit_Summon::HandleRecycled, Lifetime, false);
+	}
 }
 
 void ACombatUnit_Summon::HandleStartedBattle()

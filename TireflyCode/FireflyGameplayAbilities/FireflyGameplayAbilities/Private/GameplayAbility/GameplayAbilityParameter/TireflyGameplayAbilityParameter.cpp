@@ -68,7 +68,7 @@ TArray<FName> UTireflyGameplayAbilityParameterAbstract::GetAbilityOtherNumericPa
 	{
 		for (const auto& Param : AbilityAsset->AbilityParameters)
 		{
-			if (Param.Value == this)
+			if (Param.Value == this || Param.Value == nullptr)
 			{
 				continue;
 			}
@@ -90,7 +90,7 @@ TArray<FName> UTireflyGameplayAbilityParameterAbstract::GetAbilityOtherGameplayE
 	{
 		for (const auto& Param : AbilityAsset->AbilityParameters)
 		{
-			if (Param.Value == this)
+			if (Param.Value == this || Param.Value == nullptr)
 			{
 				continue;
 			}

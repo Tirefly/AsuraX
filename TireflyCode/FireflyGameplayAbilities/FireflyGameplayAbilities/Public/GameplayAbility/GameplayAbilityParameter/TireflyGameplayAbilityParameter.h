@@ -58,16 +58,16 @@ class FIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameterAbstract : pu
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	FName GetAbilityParameterName() const;
 
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	TArray<FName> GetAbilityOtherParameters() const;
 
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	TArray<FName> GetAbilityOtherNumericParameters() const;
 
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure)
 	TArray<FName> GetAbilityOtherGameplayEffectParameters() const;
 
 public:
@@ -91,12 +91,12 @@ public:
 
 public:
 	// 获取用于展示的文本
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	FText GetShowcaseText() const;
 	virtual FText GetShowcaseText_Implementation() const { return ShowcaseText; }
 
 	// 是否允许编辑展示文本
-	UFUNCTION(BlueprintNativeEvent, Category = "Ability")
+	UFUNCTION(BlueprintNativeEvent)
 	bool IsShowcaseTextEditable() const;
 	virtual bool IsShowcaseTextEditable_Implementation() const { return true; }
 };
