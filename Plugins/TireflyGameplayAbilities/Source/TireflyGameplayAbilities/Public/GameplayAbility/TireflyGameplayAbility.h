@@ -8,6 +8,7 @@
 #include "TireflyGameplayAbility.generated.h"
 
 
+struct FTireflyAbilityParamInfo;
 class UTireflyGameplayAbilityParameter;
 class UTireflyAbilityParam_CostBase;
 
@@ -58,6 +59,13 @@ public:
 
 		return nullptr;
 	}
+
+	// 获取该能力的Caster数据
+	UFUNCTION(BlueprintPure, Category = Ability)
+	virtual FTireflyAbilityParamInfo GetAbilityParamInfo() const;
+
+	UFUNCTION(BlueprintPure, Category = Ability)
+	virtual int32 GetCasterLevel() const;
 
 protected:
 	// 能力的唯一标识
@@ -117,19 +125,23 @@ public:
 	virtual UGameplayEffect* GetCostGameplayEffect() const override;
 
 	/** Checks cost. returns true if we can pay for the ability. False if not */
-	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo
-		, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle,
+						   const FGameplayAbilityActorInfo* ActorInfo,
+						   OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
 
-	virtual bool CommitAbilityCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo
-		, const FGameplayAbilityActivationInfo ActivationInfo, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) override;
+	virtual bool CommitAbilityCost(const FGameplayAbilitySpecHandle Handle,
+								   const FGameplayAbilityActorInfo* ActorInfo,
+								   const FGameplayAbilityActivationInfo ActivationInfo,
+								   OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) override;
 
-	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo
-		, const FGameplayAbilityActivationInfo ActivationInfo) const override;
+	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle,
+						   const FGameplayAbilityActorInfo* ActorInfo,
+						   const FGameplayAbilityActivationInfo ActivationInfo) const override;
 
 	// 允许在应用能力属性消耗之前执行一次属性消耗的计算
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = Costs)
-	TArray<UTireflyAbilityParam_CostBase*> GetCostSettings() const;
-	virtual TArray<UTireflyAbilityParam_CostBase*> GetCostSettings_Implementation() const;
+	UTireflyAbilityParam_CostBase* GetCostSetting() const;
+	virtual UTireflyAbilityParam_CostBase* GetCostSetting_Implementation() const;
 
 #pragma endregion
 };

@@ -640,9 +640,12 @@ UTireflyGameplayAbilityAsset* UK2Node_GetAbilityParameter::GetAbilityAsset(UEdGr
 				{
 					if (UClass* BlueprintClass = Blueprint->GeneratedClass)
 					{
-						if (UTireflyGameplayAbility* Ability = BlueprintClass->GetDefaultObject<UTireflyGameplayAbility>())
+						if (BlueprintClass->IsChildOf(UTireflyGameplayAbility::StaticClass()))
 						{
-							OutAsset = Ability->GetAbilityAsset<UTireflyGameplayAbilityAsset>();
+							if (UTireflyGameplayAbility* Ability = BlueprintClass->GetDefaultObject<UTireflyGameplayAbility>())
+							{
+								OutAsset = Ability->GetAbilityAsset<UTireflyGameplayAbilityAsset>();
+							}
 						}
 					}
 				}

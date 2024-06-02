@@ -13,6 +13,7 @@
 
 class UTireflyGameplayAbilitiesSettings;
 
+
 UTireflyAbilitySystemComponent* UTireflyAbilitySystemLibrary::GetTireflyAbilitySystemComponent(const AActor* Actor)
 {
 	if (!IsValid(Actor))
@@ -21,6 +22,24 @@ UTireflyAbilitySystemComponent* UTireflyAbilitySystemLibrary::GetTireflyAbilityS
 	}
 
 	return Cast<UTireflyAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor));
+}
+
+UTireflyGameplayAbilityAsset* UTireflyAbilitySystemLibrary::GetAbilityAsset(const UObject* InObject)
+{
+	UTireflyGameplayAbilityAsset* OuterAsset = nullptr;
+	UObject* Outer = InObject->GetOuter();
+
+	while (Outer)
+	{
+		if (Outer->IsA<UTireflyGameplayAbilityAsset>())
+		{
+			OuterAsset = Cast<UTireflyGameplayAbilityAsset>(Outer);
+			break;
+		}
+		Outer = Outer->GetOuter();
+	}
+	
+	return OuterAsset;
 }
 
 UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamOfAbilityClassPure(

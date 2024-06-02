@@ -41,23 +41,23 @@ public:
 
 public:
 	// 能力的唯一标识Id
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityBasics)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbilityBasics)
 	FName AbilityId = NAME_None;
 
 	// 能力的显示名称
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityBasics)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbilityBasics)
 	FText AbilityName = FText::FromString("");
 
 	// 能力的类型
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityBasics)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbilityBasics)
 	TSoftClassPtr<class UGameplayAbility> AbilityClass = nullptr;
 
 	// 能力图标
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityBasics)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbilityBasics)
 	TSoftObjectPtr<UTexture2D> AbilityIcon;
 
 	// 能力的描述
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityBasics)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbilityBasics)
 	class UTireflyAbilityParam_DescriptionBase* AbilityDescription = nullptr;
 
 #pragma endregion
@@ -67,12 +67,12 @@ public:
 
 public:
 	// 能力的冷却时间
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbiliytCommitment)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbiliytCommitment)
 	class UTireflyAbilityParam_CooldownBase* CooldownTime = nullptr;
 
 	// 能力的花费设置
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbiliytCommitment)
-	TArray<class UTireflyAbilityParam_CostBase*> CostSettings;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbiliytCommitment)
+	class UTireflyAbilityParam_CostBase* CostSetting = nullptr;
 
 #pragma endregion
 
@@ -81,7 +81,7 @@ public:
 
 public:
 	// 能力的参数设置
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityParameters)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbilityParameters)
 	TMap<FName, class UTireflyGameplayAbilityParameter*> AbilityParameters;
 
 #pragma endregion

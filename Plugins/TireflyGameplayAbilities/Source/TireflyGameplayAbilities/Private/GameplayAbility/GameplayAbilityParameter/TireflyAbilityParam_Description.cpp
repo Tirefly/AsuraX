@@ -4,17 +4,18 @@
 #include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_Description.h"
 
 #include "GameplayAbility/TireflyGameplayAbilityAsset.h"
+#include "TireflyAbilitySystemLibrary.h"
 
 
-FText UTireflyAbilityParam_CommonDescription::GetShowcaseText_Implementation() const
+FText UTireflyAbilityParam_GenericDescription::GetDisplayText_Implementation() const
 {
-	const UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this);
+	const UTireflyGameplayAbilityAsset* AbilityAsset = UTireflyAbilitySystemLibrary::GetAbilityAsset(this);
 	if (!AbilityAsset)
 	{
-		return ShowcaseText;
+		return DisplayText;
 	}
 	
-	FString ShowcaseString = ShowcaseText.ToString();
+	FString ShowcaseString = DisplayText.ToString();
 	const FRegexPattern ParamPattern(TEXT("#([^#]*)#"));
 	FRegexMatcher ParamMatcher(ParamPattern, ShowcaseString);
 		
@@ -28,7 +29,7 @@ FText UTireflyAbilityParam_CommonDescription::GetShowcaseText_Implementation() c
 			continue;
 		}
 		
-		ShowcaseString = ShowcaseString.Replace(*ParamNameSharp, *Parameter->GetShowcaseText().ToString());
+		ShowcaseString = ShowcaseString.Replace(*ParamNameSharp, *Parameter->GetDisplayText().ToString());
 	}
 	
 	return FText::FromString(ShowcaseString);

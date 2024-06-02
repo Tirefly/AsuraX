@@ -7,20 +7,20 @@
 #include "TireflyAbilityParam_Description.generated.h"
 
 
-// GameplayAbility的描述基础结构
+// 技能资产元素：文本描述
 UCLASS(Abstract)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_DescriptionBase : public UTireflyGameplayAbilityParameterBase
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_DescriptionBase : public UTireflyAbilityAssetElement_DisplayText
 {
 	GENERATED_BODY()
 };
 
 
-// GameplayAbility的通用描述
-UCLASS(DisplayName = "Common Description")
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CommonDescription : public UTireflyAbilityParam_DescriptionBase
+// 技能资产元素：通用的文本描述
+UCLASS(DisplayName = "Generic Description")
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GenericDescription : public UTireflyAbilityParam_DescriptionBase
 {
 	GENERATED_BODY()
 
 public:
-	virtual FText GetShowcaseText_Implementation() const override;
+	virtual FText GetDisplayText_Implementation() const override;
 };

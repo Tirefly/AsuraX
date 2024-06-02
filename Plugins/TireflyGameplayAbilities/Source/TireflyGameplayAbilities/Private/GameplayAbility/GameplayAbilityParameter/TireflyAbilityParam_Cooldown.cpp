@@ -6,23 +6,27 @@
 #include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_Numeric.h"
 
 
-float UTireflyAbilityParam_CommonCooldown::GetCooldownDuration_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
-	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
+void UTireflyAbilityParam_GenericCooldown::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
+
+float UTireflyAbilityParam_GenericCooldown::GetCooldownDuration_Implementation(FTireflyAbilityParamInfo ParamInfo) const
 {
 	if (CooldownTime)
 	{
-		return CooldownTime->GetParamValue(CasterASC, TargetASC, AbilityHandle, Level);
+		return CooldownTime->GetParamValue(ParamInfo);
 	}
 	
 	return 0.f;
 }
 
-FText UTireflyAbilityParam_CommonCooldown::GetShowcaseText_Implementation() const
+FText UTireflyAbilityParam_GenericCooldown::GetDisplayText_Implementation() const
 {
 	if (CooldownTime)
 	{
-		return CooldownTime->GetShowcaseText();
+		return CooldownTime->GetDisplayText();
 	}
 	
-	return Super::GetShowcaseText_Implementation();
+	return Super::GetDisplayText_Implementation();
 }

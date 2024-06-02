@@ -9,32 +9,25 @@
 #include "Kismet/KismetMathLibrary.h"
 
 
-void UTireflyAbilityParam_CostBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-}
-
-float UTireflyAbilityParam_GenericCost::GetCostValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
-	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
+float UTireflyAbilityParam_GenericCost::GetCostValue_Implementation(FTireflyAbilityParamInfo ParamInfo) const
 {
 	if (CostValue)
 	{
-		return CostValue->GetParamValue(CasterASC, TargetASC, AbilityHandle, Level);
+		return CostValue->GetParamValue(ParamInfo);
 	}
 	
 	return 0.f;
 }
 
-bool UTireflyAbilityParam_GenericCost::CheckCost_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
-	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
+bool UTireflyAbilityParam_GenericCost::CheckCost_Implementation(FTireflyAbilityParamInfo ParamInfo) const
 {
-	if (!CasterASC)
+	if (!ParamInfo.CasterASC)
 	{
 		return false;
 	}
 
-	float OldCostedValue = GetCostValue(CasterASC, TargetASC, AbilityHandle, Level);
-	float NewCostedValue = CasterASC->GetNumericAttribute(GetCostAttribute());
+	float OldCostedValue = GetCostValue(ParamInfo);
+	float NewCostedValue = ParamInfo.CasterASC->GetNumericAttribute(GetCostAttribute());
 	FVector2D CostRange = FVector2D::ZeroVector;
 
 	switch (GetModifierOp())
@@ -53,7 +46,7 @@ bool UTireflyAbilityParam_GenericCost::CheckCost_Implementation(const UTireflyAb
 		break;
 	}
 	
-	if (!UTireflyAbilitySystemLibrary::GetAttributeValueInRange(CasterASC->GetOwner(),
+	if (!UTireflyAbilitySystemLibrary::GetAttributeValueInRange(ParamInfo.CasterASC->GetOwner(),
 		GetCostAttribute(), OldCostedValue, NewCostedValue, CostRange))
 	{
 		return false;
@@ -62,12 +55,12 @@ bool UTireflyAbilityParam_GenericCost::CheckCost_Implementation(const UTireflyAb
 	return UKismetMathLibrary::InRange_FloatFloat(OldCostedValue, CostRange.X, CostRange.Y);
 }
 
-FText UTireflyAbilityParam_GenericCost::GetShowcaseText_Implementation() const
+FText UTireflyAbilityParam_GenericCost::GetDisplayText_Implementation() const
 {
 	if (CostValue)
 	{
-		return CostValue->GetShowcaseText();
+		return CostValue->GetDisplayText();
 	}
 	
-	return Super::GetShowcaseText_Implementation();
+	return Super::GetDisplayText_Implementation();
 }

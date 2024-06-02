@@ -22,10 +22,8 @@ public:
 };
 
 
-/**
- * 扩展了一些功能支持的GameplayEffect，扩展的功能如下：
- */
-UCLASS()
+/** 方便开发者编辑操作的GameplayEffect，同时可以在编辑器中创建实例 */
+UCLASS(BlueprintType, Blueprintable, DefaultToInstanced, EditInlineNew)
 class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayEffect : public UGameplayEffect
 {
 	GENERATED_BODY()

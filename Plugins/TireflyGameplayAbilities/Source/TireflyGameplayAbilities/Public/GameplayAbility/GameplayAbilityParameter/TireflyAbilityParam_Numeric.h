@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "TireflyGameplayAbilityParameter.h"
-#include "GameplayAbilitySpecHandle.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "TireflyAbilityParam_Numeric.generated.h"
 
@@ -18,8 +17,9 @@ UENUM(BlueprintType)
 enum class ETireflyAbilityNumericParamLevelBasedMode : uint8
 {
 	None = 0			UMETA(ToolTip = "参数值不考虑任何等级"),
-	Caster = 1			UMETA(ToolTip = "参数值考虑施法者等级"),
-	Ability = 2			UMETA(ToolTip = "参数值考虑技能等级")
+	Caster = 1			UMETA(ToolTip = "参数值考虑技能的施法者等级"),
+	Target = 2			UMETA(ToolTip = "参数值考虑技能的目标等级"),
+	Ability = 3			UMETA(ToolTip = "参数值考虑技能等级")
 };
 
 
@@ -34,7 +34,7 @@ enum class ETireflyAbilityNumericParamCalcMode : uint8
 };
 
 
-// 能作为数学表达式变量的GameplayAbility数值型参数基础结构
+// 技能参数：数值类型
 UCLASS(Abstract)
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_Numeric
 	: public UTireflyGameplayAbilityParameter
@@ -43,32 +43,26 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_Numeric
 
 public:
 	// 参数值计算模式
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Bitmask,
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (Bitmask,
 		BitmaskEnum = "/Script/TireflyGameplayAbilities.ETireflyAbilityNumericParamCalcMode"))
 	int32 CalcMode = (1 << static_cast<uint8>(ETireflyAbilityNumericParamCalcMode::None));
 
 public:
 	// 获取参数值，返回值会经过“CalcMode”处理
-	UFUNCTION(BlueprintPure, Category = "Ability")
+	UFUNCTION(BlueprintPure, Category = "Ability|Parameter")
 	float GetParamValueCalculated(const float& InParamValue) const;
 	
 	// 获取参数值
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = Ability)
-	float GetParamValue(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const;
-	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability|Parameter")
+	float GetParamValue(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const;
+	virtual float GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const
 	{
 		return 0.f;
 	}
 };
 
 
-// GameplayAbility的数学表达式变量基础结构
+// 能作为数学表达式变量的数值类技能参数
 UCLASS(Abstract)
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_ExpressionVariable
 	: public UTireflyAbilityParam_Numeric
@@ -77,8 +71,8 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_ExpressionVariable
 };
 
 
-// GameplayAbility的常数型参数
-UCLASS(DisplayName = "Constant Numeric")
+// 数值类技能参数：常量
+UCLASS(DisplayName = "Numeric: Constant")
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_ConstantNumeric
 	: public UTireflyAbilityParam_ExpressionVariable
 {
@@ -91,50 +85,60 @@ public:
 
 public:
 	// 参数值，仅当ValueMode为Constant时生效
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ParamValue = 0.f;
 
 public:
-	virtual FText GetShowcaseText_Implementation() const override;
+	virtual FText GetDisplayText_Implementation() const override;
 
-	// 获取参数值
-	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const override;
+	virtual float GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const override;
 };
 
 
-// GameplayAbility的属性抓取参数
-UCLASS(DisplayName = "Attribute Capture")
+// 数值类技能参数：属性值
+UCLASS(DisplayName = "Numeric: Attribute Value")
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_AttributeCapture
 	: public UTireflyAbilityParam_ExpressionVariable
 {
 	GENERATED_BODY()
 
 public:
-	// 要抓取的属性
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FGameplayAttribute AttributeToCapture;
+	// 属性类型
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayAttribute AttributeType;
 
-	// 属性抓取来源
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	ETireflyAbilityParamSourceType CaptureSource = ETireflyAbilityParamSourceType::Caster;
+	// 属性来源
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETireflyAbilityParamSourceType AttributeSource = ETireflyAbilityParamSourceType::Caster;
 
 	// 是否抓取快照
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bSnapshot = false;
 
 public:
-	// 获取参数值
-	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const override;
+	virtual float GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const override;
 };
 
 
-// GameplayAbility的基于等级的参数基础结构
+// 数值类技能参数：另一个数值参数
+UCLASS(DisplayName = "Numeric: Another Param")
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_AnotherNumericParam
+	: public UTireflyAbilityParam_ExpressionVariable
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (GetOptions = "GetOtherNumericParameters"))
+	FName ParameterName = NAME_None;
+
+public:
+	virtual float GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const override;
+
+	virtual bool IsDisplayTextEditable_Implementation() const override { return false; }
+};
+
+
+// 数值类技能参数：基于等级的
 UCLASS(Abstract)
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_LevelBased
 	: public UTireflyAbilityParam_ExpressionVariable
@@ -143,18 +147,26 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_LevelBased
 
 public:
 	// 参数值计算模式
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ETireflyAbilityNumericParamLevelBasedMode LevelBasedMode;
 
 public:
 	// 获取特定等级的参数值
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	virtual float GetParmaValueAtLevel(int32 Level = 1) const { return 0; }
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability|Parameter")
+	float GetParmaValueAtLevel(int32 Level = 1) const;
+	virtual float GetParmaValueAtLevel_Implementation(int32 Level = 1) const { return 0; }
+
+	// 获取特定等级的参数值
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability|Parameter")
+	FText GetDisplayTextAtLevel(int32 Level = 1) const;
+	virtual FText GetDisplayTextAtLevel_Implementation(int32 Level = 1) const { return FText(); }
+
+	virtual float GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const override;
 };
 
 
-// GameplayAbility的基于等级的数组型参数
-UCLASS(DisplayName = "Level Base Array Numeric")
+// 数值类技能参数：基于等级的，用数组表示
+UCLASS(DisplayName = "Numeric: Level Base Array")
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_LevelBasedNumeric_Array
 	: public UTireflyAbilityParam_LevelBased
 {
@@ -166,26 +178,19 @@ public:
 #endif
 
 public:
-	// 基于等级的参数值曲线
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	// 基于等级的参数值容器
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<int32, float> ParamValue;
 
 public:
-	virtual FText GetShowcaseText_Implementation() const override;
+	virtual FText GetDisplayText_Implementation() const override;
 	
-	// 获取特定等级的参数值
-	virtual float GetParmaValueAtLevel(int32 Level = 1) const override;
-
-	// 获取参数值
-	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const override;
+	virtual float GetParmaValueAtLevel_Implementation(int32 Level = 1) const override;
 };
 
 
-// GameplayAbility的基于等级的曲线型参数
-UCLASS(DisplayName = "Level Base Curve Numeric")
+// 数值类技能参数：基于等级的，用曲线表示
+UCLASS(DisplayName = "Numeric: Level Base Curve")
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_LevelBasedNumeric_Curve
 	: public UTireflyAbilityParam_LevelBased
 {
@@ -198,25 +203,18 @@ public:
 
 public:
 	// 基于等级的参数值曲线
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRuntimeFloatCurve ParamValue;
 
 public:
-	virtual FText GetShowcaseText_Implementation() const override;
+	virtual FText GetDisplayText_Implementation() const override;
 	
-	// 获取特定等级的参数值
-	virtual float GetParmaValueAtLevel(int32 Level) const override;
-
-	// 获取参数值
-	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const override;
+	virtual float GetParmaValueAtLevel_Implementation(int32 Level = 1) const override;
 };
 
 
-// GameplayAbility的数学表达式参数
-UCLASS(DisplayName = "Math Expression")
+// 数值类技能参数：数学表达式
+UCLASS(DisplayName = "Numeric: Math Expression")
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_MathExpression
 	: public UTireflyAbilityParam_Numeric
 {
@@ -229,17 +227,13 @@ public:
 
 public:
 	// 作为参数的数学表达式，表达式中的变量参数需要包含在<>内，如“<x>+15*<y>+<w>*<z>”
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString MathExpression;
 
 	// 作为参数的数学表达式变量数组
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<FString, UTireflyAbilityParam_ExpressionVariable*> ExpressionVariables;
 
 public:
-	// 获取数学表达式的参数值
-	virtual float GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const override;
+	virtual float GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const override;
 };

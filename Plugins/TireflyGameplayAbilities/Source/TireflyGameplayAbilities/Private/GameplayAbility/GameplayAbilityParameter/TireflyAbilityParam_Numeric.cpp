@@ -5,6 +5,7 @@
 
 #include "AbilitySystemLog.h"
 #include "TireflyAbilitySystemComponent.h"
+#include "TireflyAbilitySystemLibrary.h"
 #include "GameplayAbility/TireflyGameplayAbilityAsset.h"
 
 
@@ -25,20 +26,20 @@ void UTireflyAbilityParam_ConstantNumeric::PostEditChangeProperty(FPropertyChang
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (PropertyChangedEvent.Property
-		&& (PropertyChangedEvent.Property->GetName() == "ParamValue"
-			|| PropertyChangedEvent.Property->GetName() == "CalcMode"))
+	if (PropertyChangedEvent.MemberProperty
+		&& (PropertyChangedEvent.MemberProperty->GetName() == "ParamValue"
+			|| PropertyChangedEvent.MemberProperty->GetName() == "CalcMode"))
 	{
 		if (ParamValue == 0.f)
 		{
-			ShowcaseText = FText::FromString("0");
+			DisplayText = FText::FromString("0");
 			return;
 		}
-		ShowcaseText = GetShowcaseText();
+		DisplayText = GetDisplayText();
 	}
 }
 
-FText UTireflyAbilityParam_ConstantNumeric::GetShowcaseText_Implementation() const
+FText UTireflyAbilityParam_ConstantNumeric::GetDisplayText_Implementation() const
 {
 	FString OutText = FString::Printf(TEXT("%g"), ParamValue);
 	if (CalcMode & (1 << static_cast<uint8>(ETireflyAbilityNumericParamCalcMode::Percentage)))
@@ -46,46 +47,83 @@ FText UTireflyAbilityParam_ConstantNumeric::GetShowcaseText_Implementation() con
 	return FText::FromString(OutText);
 }
 
-float UTireflyAbilityParam_ConstantNumeric::GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
-	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
+float UTireflyAbilityParam_ConstantNumeric::GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo) const
 {
 	return GetParamValueCalculated(ParamValue);
 }
 
-float UTireflyAbilityParam_AttributeCapture::GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
-	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
+float UTireflyAbilityParam_AttributeCapture::GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo) const
 {
-	if (IsValid(CasterASC) && CaptureSource == ETireflyAbilityParamSourceType::Caster)
+	if (IsValid(ParamInfo.CasterASC) && AttributeSource == ETireflyAbilityParamSourceType::Caster)
 	{
-		return CasterASC->GetNumericAttribute(AttributeToCapture);
+		return ParamInfo.CasterASC->GetNumericAttribute(AttributeType);
 	}
 
-	if (IsValid(TargetASC) && CaptureSource == ETireflyAbilityParamSourceType::Target)
+	if (IsValid(ParamInfo.TargetASC) && AttributeSource == ETireflyAbilityParamSourceType::Target)
 	{
-		return TargetASC->GetNumericAttribute(AttributeToCapture);
+		return ParamInfo.TargetASC->GetNumericAttribute(AttributeType);
 	}
 
 	return 0.f;
+}
+
+float UTireflyAbilityParam_AnotherNumericParam::GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo) const
+{
+	if (UTireflyGameplayAbilityAsset* AbilityAsset = UTireflyAbilitySystemLibrary::GetAbilityAsset(this))
+	{
+		if (UTireflyGameplayAbilityParameter* Param = AbilityAsset->AbilityParameters.FindRef(ParameterName))
+		{
+			if (UTireflyAbilityParam_Numeric* NumericParam = Cast<UTireflyAbilityParam_Numeric>(Param))
+			{
+				return NumericParam->GetParamValue(ParamInfo);
+			}
+		}
+	}
+	
+	return Super::GetParamValue_Implementation(ParamInfo);
+}
+
+float UTireflyAbilityParam_LevelBased::GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo) const
+{
+	if (LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::Caster && IsValid(ParamInfo.CasterASC))
+	{
+		return GetParmaValueAtLevel(ParamInfo.CasterASC->GetAbilityCasterLevel());
+	}
+
+	if (LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::Target && IsValid(ParamInfo.TargetASC))
+	{
+		return GetParmaValueAtLevel(ParamInfo.TargetASC->GetAbilityCasterLevel());
+	}
+	
+	if (LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::Ability && ParamInfo.AbilityHandle.IsValid())
+	{
+		if (const FGameplayAbilitySpec* Spec = ParamInfo.CasterASC->FindAbilitySpecFromHandle(ParamInfo.AbilityHandle))
+		{
+			return GetParmaValueAtLevel(Spec->Level);
+		}
+	}
+
+	return GetParmaValueAtLevel(1.f);
 }
 
 void UTireflyAbilityParam_LevelBasedNumeric_Array::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (PropertyChangedEvent.Property
-		&& (PropertyChangedEvent.Property->GetName() == "ParamValue"
-			|| PropertyChangedEvent.Property->GetName() == "CalcMode"))
+	if (PropertyChangedEvent.MemberProperty
+		&& (PropertyChangedEvent.MemberProperty->GetName() == "ParamValue"
+			|| PropertyChangedEvent.MemberProperty->GetName() == "CalcMode"))
 	{
 		if (ParamValue.IsEmpty())
 		{
-			ShowcaseText = FText::FromString("");
+			DisplayText = FText::FromString("");
 			return;
 		}
-		ShowcaseText = GetShowcaseText();
+		DisplayText = GetDisplayText();
 	}
 }
 
-FText UTireflyAbilityParam_LevelBasedNumeric_Array::GetShowcaseText_Implementation() const
+FText UTireflyAbilityParam_LevelBasedNumeric_Array::GetDisplayText_Implementation() const
 {
 	FString OutText;
 	for (auto& Pair : ParamValue)
@@ -99,53 +137,29 @@ FText UTireflyAbilityParam_LevelBasedNumeric_Array::GetShowcaseText_Implementati
 	return FText::FromString(OutText);
 }
 
-float UTireflyAbilityParam_LevelBasedNumeric_Array::GetParmaValueAtLevel(int32 Level) const
+float UTireflyAbilityParam_LevelBasedNumeric_Array::GetParmaValueAtLevel_Implementation(int32 Level) const
 {
 	return GetParamValueCalculated(ParamValue.FindRef(Level));
-}
-
-float UTireflyAbilityParam_LevelBasedNumeric_Array::GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
-	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
-{
-	if (!IsValid(CasterASC) || LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::None)
-	{
-		return GetParmaValueAtLevel(Level);
-	}
-	
-	if (LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::Caster)
-	{
-		return GetParmaValueAtLevel(CasterASC->GetAbilityCasterLevel());
-	}
-	
-	if (LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::Ability)
-	{
-		if (const FGameplayAbilitySpec* Spec = CasterASC->FindAbilitySpecFromHandle(AbilityHandle))
-		{
-			return GetParmaValueAtLevel(Spec->Level);
-		}
-	}
-
-	return GetParmaValueAtLevel(Level);
 }
 
 void UTireflyAbilityParam_LevelBasedNumeric_Curve::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (PropertyChangedEvent.Property
-		&& (PropertyChangedEvent.Property->GetName() == "ParamValue"
-			|| PropertyChangedEvent.Property->GetName() == "CalcMode"))
+	if (PropertyChangedEvent.MemberProperty
+		&& (PropertyChangedEvent.MemberProperty->GetName() == "ParamValue"
+			|| PropertyChangedEvent.MemberProperty->GetName() == "CalcMode"))
 	{
 		if (ParamValue.GetRichCurveConst()->Keys.IsEmpty())
 		{
-			ShowcaseText = FText::FromString("");
+			DisplayText = FText::FromString("");
 			return;
 		}
-		ShowcaseText = GetShowcaseText();
+		DisplayText = GetDisplayText();
 	}
 }
 
-FText UTireflyAbilityParam_LevelBasedNumeric_Curve::GetShowcaseText_Implementation() const
+FText UTireflyAbilityParam_LevelBasedNumeric_Curve::GetDisplayText_Implementation() const
 {
 	FString OutText;
 	if (const FRichCurve* RichCurve = ParamValue.GetRichCurveConst())
@@ -161,7 +175,7 @@ FText UTireflyAbilityParam_LevelBasedNumeric_Curve::GetShowcaseText_Implementati
 	return FText::FromString(OutText);
 }
 
-float UTireflyAbilityParam_LevelBasedNumeric_Curve::GetParmaValueAtLevel(int32 Level) const
+float UTireflyAbilityParam_LevelBasedNumeric_Curve::GetParmaValueAtLevel_Implementation(int32 Level) const
 {
 	float MinVal = 0.f, MaxVal = 0.f;
 	ParamValue.GetRichCurveConst()->GetValueRange(MinVal, MaxVal);
@@ -170,35 +184,11 @@ float UTireflyAbilityParam_LevelBasedNumeric_Curve::GetParmaValueAtLevel(int32 L
 	return GetParamValueCalculated(OutValue);
 }
 
-float UTireflyAbilityParam_LevelBasedNumeric_Curve::GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
-	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
-{
-	if (!IsValid(CasterASC) || LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::None)
-	{
-		return GetParmaValueAtLevel(Level);
-	}
-	
-	if (LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::Caster)
-	{
-		return GetParmaValueAtLevel(CasterASC->GetAbilityCasterLevel());
-	}
-
-	if (LevelBasedMode == ETireflyAbilityNumericParamLevelBasedMode::Ability)
-	{
-		if (const FGameplayAbilitySpec* Spec = CasterASC->FindAbilitySpecFromHandle(AbilityHandle))
-		{
-			return GetParmaValueAtLevel(Spec->Level);
-		}
-	}
-
-	return GetParmaValueAtLevel(Level);
-}
-
 void UTireflyAbilityParam_MathExpression::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (PropertyChangedEvent.Property && PropertyChangedEvent.Property->GetName() == "MathExpression")
+	if (PropertyChangedEvent.MemberProperty && PropertyChangedEvent.MemberProperty->GetName() == "MathExpression")
 	{
 		ExpressionVariables.Empty();
 		if (MathExpression.IsEmpty())
@@ -216,8 +206,7 @@ void UTireflyAbilityParam_MathExpression::PostEditChangeProperty(FPropertyChange
 	}
 }
 
-float UTireflyAbilityParam_MathExpression::GetParamValue_Implementation(const UTireflyAbilitySystemComponent* CasterASC,
-	const UTireflyAbilitySystemComponent* TargetASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level) const
+float UTireflyAbilityParam_MathExpression::GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo) const
 {
 	FString ExpressionToCalc = MathExpression;
 	const FRegexPattern VariablePattern(TEXT("<([^>]*)>"));
@@ -229,13 +218,13 @@ float UTireflyAbilityParam_MathExpression::GetParamValue_Implementation(const UT
 		if (!IsValid(Variable))
 		{
 			UE_LOG(LogAbilitySystem, Error, TEXT("Abililty Parameter {%s}-{%s} Variable {%s} not found!"),
-				*TireflyAbilityParameterHelper::GetAbilityAsset(this)->GetName(),
-				*GetAbilityParameterName().ToString(),
+				*UTireflyAbilitySystemLibrary::GetAbilityAsset(this)->GetName(),
+				*GetParameterName().ToString(),
 				*NumericMatcher.GetCaptureGroup(0))
 			return 0.f;
 		}
 
-		float VariableValue = Variable->GetParamValue(CasterASC, TargetASC, AbilityHandle, Level);
+		float VariableValue = Variable->GetParamValue(ParamInfo);
 		ExpressionToCalc = ExpressionToCalc.Replace(*VariableName,	*FString::SanitizeFloat(VariableValue));
 	}
 

@@ -6,16 +6,17 @@
 #include "AbilitySystemGlobals.h"
 #include "GameplayTagsManager.h"
 #include "TireflyAbilitySystemComponent.h"
+#include "TireflyAbilitySystemLibrary.h"
 #include "TireflyAbilitySystemSettings.h"
 #include "GameplayAbility/TireflyGameplayAbilityAsset.h"
 #include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_Numeric.h"
 
 
-void UTireflyAbilityParam_GameplayEffect::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+void UTireflyAbilityParam_GameplayEffectSpec::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(UTireflyAbilityParam_GameplayEffect, GameplayEffect))
+	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(UTireflyAbilityParam_GameplayEffectSpec, GameplayEffect))
 	{
 		if (!GameplayEffect)
 		{
@@ -23,7 +24,7 @@ void UTireflyAbilityParam_GameplayEffect::PostEditChangeProperty(FPropertyChange
 		}
 		UGameplayEffect* EffectCDO = GameplayEffect->GetDefaultObject<UGameplayEffect>();
 
-		SetByCallerModifiers.Empty();
+		SetByCallers.Empty();
 		for (auto& ModifierInfo : EffectCDO->Modifiers)
 		{
 			if (ModifierInfo.ModifierMagnitude.GetMagnitudeCalculationType() != EGameplayEffectMagnitudeCalculation::SetByCaller)
@@ -35,22 +36,22 @@ void UTireflyAbilityParam_GameplayEffect::PostEditChangeProperty(FPropertyChange
 			{
 				auto* NameSetByCaller = NewObject<UTireflyAbilityParamDetail_GameplayEffect_NameSetByCaller>(this);
 				NameSetByCaller->SetByCallerName = ModifierInfo.ModifierMagnitude.GetSetByCallerFloat().DataName;
-				SetByCallerModifiers.Add(NameSetByCaller);
+				SetByCallers.Add(NameSetByCaller);
 			}
 			else if (ModifierInfo.ModifierMagnitude.GetSetByCallerFloat().DataTag.IsValid())
 			{
 				auto* TagSetByCaller = NewObject<UTireflyAbilityParamDetail_GameplayEffect_TagSetByCaller>(this);
 				TagSetByCaller->SetByCallerTag = ModifierInfo.ModifierMagnitude.GetSetByCallerFloat().DataTag;
-				SetByCallerModifiers.Add(TagSetByCaller);
+				SetByCallers.Add(TagSetByCaller);
 			}
 		}
 	}
 }
 
-FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffect::MakeOutgoingGameplayEffectSpec_Implementation(
-	UTireflyAbilitySystemComponent* CasterASC, const FGameplayAbilitySpecHandle AbilityHandle, int32 Level)
+FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffectSpec::MakeOutgoingGameplayEffectSpec_Implementation(
+	FTireflyAbilityParamInfo ParamInfo, int32 Level)
 {
-	if (!GameplayEffect || !CasterASC)
+	if (!GameplayEffect || !ParamInfo.CasterASC)
 	{
 		return FGameplayEffectSpecHandle();
 	}
@@ -62,8 +63,8 @@ FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffect::MakeOutgoingGamep
 		return FGameplayEffectSpecHandle();
 	}
 	
-	FGameplayAbilitySpec* AbilitySpec =CasterASC->FindAbilitySpecFromHandle(AbilityHandle);
-	FGameplayAbilityActorInfo* ActorInfo = CasterASC->AbilityActorInfo.Get();
+	FGameplayAbilitySpec* AbilitySpec = ParamInfo.CasterASC->FindAbilitySpecFromHandle(ParamInfo.AbilityHandle);
+	FGameplayAbilityActorInfo* ActorInfo = ParamInfo.CasterASC->AbilityActorInfo.Get();
 	if (!AbilitySpec || !ActorInfo)
 	{
 		return FGameplayEffectSpecHandle();
@@ -79,11 +80,11 @@ FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffect::MakeOutgoingGamep
 	Context.AddSourceObject(AbilitySpec->SourceObject.Get());
 	for (UTireflyAbilityParamDetail_GameplayEffect_ContextSetting* ContextSetting : ContextSettings)
 	{
-		ContextSetting->ModifyGameplayEffectContext(Context, CasterASC, AbilityHandle, Level);
+		ContextSetting->ModifyGameplayEffectContext(Context, ParamInfo);
 	}
 
 	// Make the spec of GameplayEffect
-	FGameplayEffectSpecHandle EffectSpecHandle = CasterASC->MakeOutgoingSpec(GameplayEffect, Level, Context);
+	FGameplayEffectSpecHandle EffectSpecHandle = ParamInfo.CasterASC->MakeOutgoingSpec(GameplayEffect, Level, Context);
 	if (!EffectSpecHandle.IsValid())
 	{
 		return FGameplayEffectSpecHandle();
@@ -93,7 +94,7 @@ FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffect::MakeOutgoingGamep
 	EffectSpecHandle.Data->SetByCallerTagMagnitudes = AbilitySpec->SetByCallerTagMagnitudes;
 	// Set the duration
 	{
-		const float Duration = DurationTime ? DurationTime->GetParamValue(CasterASC, nullptr, AbilityHandle, Level) : 1.f;
+		const float Duration = DurationTime ? DurationTime->GetParamValue(ParamInfo) : 1.f;
 		FGameplayTag DurationTag = SettingsGAS->GetGenericDurationSetByCallerTag();
 		if (TagManager->FindTagNode(DurationTag.GetTagName()).IsValid())
 		{
@@ -105,19 +106,19 @@ FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffect::MakeOutgoingGamep
 		}
 	}
 	// Set the period
-	EffectSpecHandle.Data->Period = PeriodTime ? PeriodTime->GetParamValue(CasterASC, nullptr, AbilityHandle, Level) : 0.f;
+	EffectSpecHandle.Data->Period = PeriodTime ? PeriodTime->GetParamValue(ParamInfo) : 0.f;
 	// Set the stack count
-	EffectSpecHandle.Data->SetStackCount(StackToApply ? StackToApply->GetParamValue(CasterASC, nullptr, AbilityHandle, Level) : 1.f);
+	EffectSpecHandle.Data->SetStackCount(StackToApply ? StackToApply->GetParamValue(ParamInfo) : 1.f);
 	// Set the set by caller magnitudes
-	for (UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier* SetByCaller : SetByCallerModifiers)
+	for (UTireflyAbilityParamDetail_GameplayEffect_SetByCaller* SetByCaller : SetByCallers)
 	{
-		SetByCaller->AssignSetByCallerModifier(EffectSpecHandle, CasterASC, AbilityHandle, Level);
+		SetByCaller->AssignSetByCallerModifier(EffectSpecHandle, ParamInfo);
 	}
 
 	return EffectSpecHandle;
 }
 
-bool UTireflyAbilityParam_GameplayEffect::IsEffectHasDuration() const
+bool UTireflyAbilityParam_GameplayEffectSpec::IsEffectHasDuration() const
 {
 	if (GameplayEffect)
 	{
@@ -130,7 +131,7 @@ bool UTireflyAbilityParam_GameplayEffect::IsEffectHasDuration() const
 	return false;
 }
 
-bool UTireflyAbilityParam_GameplayEffect::IsEffectNotInstant() const
+bool UTireflyAbilityParam_GameplayEffectSpec::IsEffectNotInstant() const
 {
 	if (GameplayEffect)
 	{
@@ -143,90 +144,82 @@ bool UTireflyAbilityParam_GameplayEffect::IsEffectNotInstant() const
 	return false;
 }
 
-void UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier::PostEditChangeProperty(
-	FPropertyChangedEvent& PropertyChangedEvent)
+FGameplayEffectSpecHandle UTireflyAbilityParam_GameplayEffectInstance::MakeOutgoingGameplayEffectSpec_Implementation(
+	FTireflyAbilityParamInfo ParamInfo, int32 Level)
 {
-	Super::PostEditChangeProperty(PropertyChangedEvent);
+	if (!GameplayEffect || !ParamInfo.CasterASC)
+	{
+		return FGameplayEffectSpecHandle();
+	}
+	
+	FGameplayAbilitySpec* AbilitySpec = ParamInfo.CasterASC->FindAbilitySpecFromHandle(ParamInfo.AbilityHandle);
+	FGameplayAbilityActorInfo* ActorInfo = ParamInfo.CasterASC->AbilityActorInfo.Get();
+	if (!AbilitySpec || !ActorInfo)
+	{
+		return FGameplayEffectSpecHandle();
+	}
 
-	if (PropertyChangedEvent.Property->GetName() == "Magnitude")
+	// Make the context of GameplayEffect
+	FGameplayEffectContextHandle Context = FGameplayEffectContextHandle(UAbilitySystemGlobals::Get().AllocGameplayEffectContext());
+	// By default, use the owner and avatar as the instigator and causer
+	Context.AddInstigator(ActorInfo->OwnerActor.Get(), ActorInfo->AvatarActor.Get());
+	// add in the ability tracking here.
+	Context.SetAbility(AbilitySpec->Ability);
+	// Pass along the source object to the effect
+	Context.AddSourceObject(AbilitySpec->SourceObject.Get());
+	for (UTireflyAbilityParamDetail_GameplayEffect_ContextSetting* ContextSetting : ContextSettings)
 	{
-		if (Magnitude)
-		{
-			MagnitudeName = NAME_None;
-		}
+		ContextSetting->ModifyGameplayEffectContext(Context, ParamInfo);
 	}
-	if (PropertyChangedEvent.Property->GetName() == "MagnitudeName")
+
+	// Make the spec of GameplayEffect
+	FGameplayEffectSpec* NewSpec = new FGameplayEffectSpec(GameplayEffect, Context, Level);
+	FGameplayEffectSpecHandle EffectSpecHandle = FGameplayEffectSpecHandle(NewSpec);
+	if (!EffectSpecHandle.IsValid())
 	{
-		if (MagnitudeName != NAME_None)
-		{
-			Magnitude = nullptr;
-		}
+		return FGameplayEffectSpecHandle();
 	}
+
+	return EffectSpecHandle;
 }
 
-TArray<FName> UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier::GetSetByCallerModifierParamNames() const
+FGameplayEffectSpecHandle UTireflyAbilityParam_AnotherGameplayEffectParam::
+MakeOutgoingGameplayEffectSpec_Implementation(FTireflyAbilityParamInfo ParamInfo, int32 Level)
 {
-	TArray<FName> ParamNames;
-	if (UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this))
+	if (UTireflyGameplayAbilityAsset* AbilityAsset = UTireflyAbilitySystemLibrary::GetAbilityAsset(this))
 	{
-		for (const TPair<FName, UTireflyGameplayAbilityParameter*>& ParamPair : AbilityAsset->AbilityParameters)
+		if (UTireflyGameplayAbilityParameter* Param = AbilityAsset->AbilityParameters.FindRef(ParameterName))
 		{
-			if (UTireflyAbilityParam_Numeric* NumericParam = Cast<UTireflyAbilityParam_Numeric>(ParamPair.Value))
+			if (UTireflyAbilityParam_GameplayEffectBase* ParamGE = Cast<UTireflyAbilityParam_GameplayEffectBase>(Param))
 			{
-				ParamNames.Add(ParamPair.Key);
+				return ParamGE->MakeOutgoingGameplayEffectSpec(ParamInfo, Level);
 			}
 		}
 	}
-
-	return ParamNames;
-}
-
-UTireflyAbilityParam_Numeric* UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier::GetMagnitude() const
-{
-	if (Magnitude)
-	{
-		return Magnitude;
-	}
-
-	if (MagnitudeName != NAME_None)
-	{
-		if (UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this))
-		{
-			if (UTireflyAbilityParam_Numeric* NumericParam = Cast<UTireflyAbilityParam_Numeric>(
-				AbilityAsset->AbilityParameters.FindRef(MagnitudeName)))
-			{
-				return NumericParam;
-			}
-		}
-	}
-
-	return nullptr;
+	
+	return Super::MakeOutgoingGameplayEffectSpec_Implementation(ParamInfo, Level);
 }
 
 void UTireflyAbilityParamDetail_GameplayEffect_TagSetByCaller::AssignSetByCallerModifier_Implementation(
-	FGameplayEffectSpecHandle& EffectSpecHandle, UTireflyAbilitySystemComponent* CasterASC,
-	const FGameplayAbilitySpecHandle AbilityHandle, int32 Level)
+	FGameplayEffectSpecHandle& EffectSpecHandle, FTireflyAbilityParamInfo ParamInfo)
 {
-	const UTireflyAbilityParam_Numeric* NumericMagnitude = GetMagnitude();
-	if (!NumericMagnitude)
+	if (!Magnitude)
 	{
 		return;
 	}
 	
 	float& SetByCallerMagnitude = EffectSpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SetByCallerTag);
-	SetByCallerMagnitude = NumericMagnitude->GetParamValue(CasterASC, nullptr, AbilityHandle, Level);
+	SetByCallerMagnitude = Magnitude->GetParamValue(ParamInfo);
 }
 
 void UTireflyAbilityParamDetail_GameplayEffect_NameSetByCaller::AssignSetByCallerModifier_Implementation(
-	FGameplayEffectSpecHandle& EffectSpecHandle, UTireflyAbilitySystemComponent* CasterASC,
-	const FGameplayAbilitySpecHandle AbilityHandle, int32 Level)
+	FGameplayEffectSpecHandle& EffectSpecHandle, FTireflyAbilityParamInfo ParamInfo)
 {
-	const UTireflyAbilityParam_Numeric* NumericMagnitude = GetMagnitude();
-	if (!NumericMagnitude)
+	if (!Magnitude)
 	{
 		return;
 	}
 	
 	float& SetByCallerMagnitude = EffectSpecHandle.Data->SetByCallerNameMagnitudes.FindOrAdd(SetByCallerName);
-	SetByCallerMagnitude = NumericMagnitude->GetParamValue(CasterASC, nullptr, AbilityHandle, Level);
+	SetByCallerMagnitude = Magnitude->GetParamValue(ParamInfo);
 }

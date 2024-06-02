@@ -7,14 +7,14 @@
 #include "GameplayEffectTypes.h"
 #include "TireflyAbilitySystemLibrary.generated.h"
 
+
 class UTireflyGameplayAbilityAsset;
 class UTireflyGameplayAbility;
 class UTireflyGameplayAbilityParameter;
 class UTireflyAbilitySystemComponent;
 
-/**
- * 
- */
+
+/** 能力系统的辅助函数库 */
 UCLASS()
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilitySystemLibrary : public UBlueprintFunctionLibrary
 {
@@ -33,6 +33,10 @@ public:
 #pragma region AbilityParameter
 
 public:
+	// 获取Object作为Outer（或者Outermost）的AbilityAsset
+	UFUNCTION(BlueprintPure, Category = "Ability|Parameter")
+	static UTireflyGameplayAbilityAsset* GetAbilityAsset(const UObject* InObject);
+	
 	// 根据AbilityRef获取指定的AbilityAsset参数（纯函数）
 	UFUNCTION(BlueprintPure, BlueprintInternalUseOnly, Category = "Ability")
 	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAbilityClassPure(TSubclassOf<UTireflyGameplayAbility> AbilityClass, FName Parameter, bool& Success);

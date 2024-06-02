@@ -3,16 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "TireflyGameplayAbilityParameter.generated.h"
 
 
 class UTireflyGameplayAbilityAsset;
-
-
-namespace TireflyAbilityParameterHelper
-{
-	static UTireflyGameplayAbilityAsset* GetAbilityAsset(const UObject* InObject);
-}
+class UTireflyAbilitySystemComponent;
 
 
 // GameplayAbility参数的来源类型
@@ -24,54 +20,103 @@ enum class ETireflyAbilityParamSourceType : uint8
 };
 
 
+// 技能参数信息
+USTRUCT(BlueprintType)
+struct FTireflyAbilityParamInfo
+{
+	GENERATED_BODY()
+
+public:
+	// 技能释放者的技能系统组件
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UTireflyAbilitySystemComponent> CasterASC = nullptr;
+
+	// 技能目标的技能系统组件
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UTireflyAbilitySystemComponent> TargetASC = nullptr;
+
+	// 技能的句柄
+	UPROPERTY(BlueprintReadWrite)
+	FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle();
+
+public:
+	FTireflyAbilityParamInfo() {}
+
+	FTireflyAbilityParamInfo(UTireflyAbilitySystemComponent* InCasterASC, UTireflyAbilitySystemComponent* InTargetASC
+		, const FGameplayAbilitySpecHandle& InAbilityHandle)
+		: CasterASC(InCasterASC), TargetASC(InTargetASC), AbilityHandle(InAbilityHandle) {}
+};
+
+
+// 技能资产的基础元素
 UCLASS(Abstract, CollapseCategories, BlueprintType, Blueprintable, DefaultToInstanced, EditInlineNew)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameterBase : public UObject
+class UTireflyAbilityAssetElement : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	// 获取该元素所在的技能参数的名字
+	UFUNCTION(BlueprintPure, Category = "Ability|Parameter")
+	FName GetParameterName() const;
+
+	// 获取不包含该元素所在的技能参数以外的所有其他技能参数名字
+	UFUNCTION(BlueprintPure, Category = "Ability|Parameter")
+	TArray<FName> GetOtherParameters() const;
+
+	// 获取不包含该元素所在的技能参数以外的所有其他数值类技能参数名字
+	UFUNCTION(BlueprintPure, Category = "Ability|Parameter")
+	TArray<FName> GetOtherNumericParameters() const;
+
+	// 获取不包含该元素所在的技能参数以外的所有其他游戏效果类技能参数名字
+	UFUNCTION(BlueprintPure, Category = "Ability|Parameter")
+	TArray<FName> GetOtherGameplayEffectParameters() const;
+
+public:
+	virtual void PostInitProperties() override;
+
+	// 初始化技能资产的基础元素
+	UFUNCTION(BlueprintNativeEvent, Meta = (ForceAsFunction, DisplayName = "Initialize"), Category = "Ability|Parameter")
+	void K2_PostInitProperties();
+	virtual void K2_PostInitProperties_Implementation() {}
+	
+};
+
+
+// 需要显示文本的技能资产元素
+UCLASS(Abstract)
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityAssetElement_DisplayText : public UTireflyAbilityAssetElement
 {
 	GENERATED_BODY()
 
 public:
 	// 用于展示的文本
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (MultiLine = "true", EditCondition = "IsShowcaseTextEditable", EditConditionHides))
-	FText ShowcaseText;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (MultiLine = "true", EditCondition = "IsDisplayTextEditable", EditConditionHides))
+	FText DisplayText;
 
 public:
 	// 获取用于展示的文本
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
-	FText GetShowcaseText() const;
-	virtual FText GetShowcaseText_Implementation() const { return ShowcaseText; }
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability|Parameter")
+	FText GetDisplayText() const;
+	virtual FText GetDisplayText_Implementation() const { return DisplayText; }
 
 	// 是否允许编辑展示文本
-	UFUNCTION(BlueprintNativeEvent, Category = "Ability")
-	bool IsShowcaseTextEditable() const;
-	virtual bool IsShowcaseTextEditable_Implementation() const { return true; }
-
-	// 获取参数的可选选项
-	UFUNCTION(BlueprintNativeEvent, Category = "Ability")
-	TArray<FName> GetAbilityParamOptions() const;
-	virtual TArray<FName> GetAbilityParamOptions_Implementation() const;
-
-	UFUNCTION(BlueprintPure, Category = "Ability")
-	FName GetAbilityParameterName() const;
+	UFUNCTION(BlueprintNativeEvent, Category = "Ability|Parameter")
+	bool IsDisplayTextEditable() const;
+	virtual bool IsDisplayTextEditable_Implementation() const { return true; }
 };
 
 
-// GameplayAbility参数的基础结构
+// 技能参数的基础结构
 UCLASS(Abstract)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameter : public UTireflyGameplayAbilityParameterBase
+class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameter : public UTireflyAbilityAssetElement_DisplayText
 {
 	GENERATED_BODY()
 };
 
 
 // GameplayAbility参数细节的基础结构
-UCLASS(Abstract, CollapseCategories, BlueprintType, Blueprintable, DefaultToInstanced, EditInlineNew)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameterDetail : public UObject
+UCLASS(Abstract)
+class TIREFLYGAMEPLAYABILITIES_API UTireflyGameplayAbilityParameterDetail : public UTireflyAbilityAssetElement
 {
 	GENERATED_BODY()
-
-protected:
-	// 获取参数的可选选项
-	UFUNCTION(BlueprintNativeEvent, Category = "Ability")
-	TArray<FName> GetAbilityParamOptions() const;
-	virtual TArray<FName> GetAbilityParamOptions_Implementation() const;
 };

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "TireflyGameplayAbilityParameter.h"
-#include "GameplayAbilitySpecHandle.h"
 #include "GameplayEffectTypes.h"
 #include "TireflyAbilityParam_GameplayEffect.generated.h"
 
@@ -14,10 +13,31 @@ class UTireflyAbilityParam_Numeric;
 class UGameplayEffect;
 
 
-// GameplayAbility的GameplayEffect运行时参数
-UCLASS(DisplayName = "Gameplay Effect")
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GameplayEffect
-	: public UTireflyGameplayAbilityParameter
+// 技能参数：GameplayEffect基类
+UCLASS(Abstract)
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GameplayEffectBase : public UTireflyGameplayAbilityParameter
+{
+	GENERATED_BODY()
+
+public:
+	// 创建GameplayEffectSpec
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability|Parameter")
+	FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec(
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo(), int32 Level = 1);
+	virtual FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec_Implementation(
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo(), int32 Level = 1)
+	{
+		return FGameplayEffectSpecHandle();
+	}
+	
+	virtual bool IsDisplayTextEditable_Implementation() const override { return false; }
+};
+
+
+// 技能参数：基于GameplayEffectClass创建GameplayEffectSpec
+UCLASS(DisplayName = "Gameplay Effect: Spec")
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GameplayEffectSpec
+	: public UTireflyAbilityParam_GameplayEffectBase
 {
 	GENERATED_BODY()
 
@@ -34,13 +54,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "IsEffectNotInstant", EditConditionHides))
 	UTireflyAbilityParam_Numeric* PeriodTime = nullptr;
 
-	// GameplayEffect的周期间隔
+	// GameplayEffect的单次堆叠应用
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "IsEffectNotInstant", EditConditionHides))
 	UTireflyAbilityParam_Numeric* StackToApply = nullptr;
 
 	// GameplayEffect的SetByCallerModifier
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<class UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier*> SetByCallerModifiers;
+	TArray<class UTireflyAbilityParamDetail_GameplayEffect_SetByCaller*> SetByCallers;
 
 	// GameplayEffect的ContextSetting
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -52,19 +72,54 @@ public:
 #endif
 	
 	// 创建GameplayEffectSpec
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = Ability)
-	FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec(UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(), int32 Level = 1);
-	virtual FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec_Implementation(UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(), int32 Level = 1);
+	virtual FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec_Implementation(
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo(), int32 Level = 1) override;
 
 	UFUNCTION()
 	bool IsEffectHasDuration() const;
 	
 	UFUNCTION()
 	bool IsEffectNotInstant() const;
+};
 
-	virtual bool IsShowcaseTextEditable_Implementation() const override { return false; }
+
+UCLASS(DontCollapseCategories, DisplayName = "Gameplay Effect: Instance")
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GameplayEffectInstance
+	: public UTireflyAbilityParam_GameplayEffectBase
+{
+	GENERATED_BODY()
+
+public:
+	// 能力的冷却时间
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UTireflyGameplayEffect* GameplayEffect = nullptr;
+
+	// GameplayEffect的ContextSetting
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<class UTireflyAbilityParamDetail_GameplayEffect_ContextSetting*> ContextSettings;
+
+public:
+	// 创建GameplayEffectSpec
+	virtual FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec_Implementation(
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo(), int32 Level = 1) override;
+};
+
+
+// GameplayAbility的OtherGameplayEffectParam
+UCLASS(DisplayName = "Gameplay Effect: Another Param")
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_AnotherGameplayEffectParam
+	: public UTireflyAbilityParam_GameplayEffectBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (GetOptions = "GetOtherGameplayEffectParameters"))
+	FName ParameterName = NAME_None;
+
+public:
+	// 创建GameplayEffectSpec
+	virtual FGameplayEffectSpecHandle MakeOutgoingGameplayEffectSpec_Implementation(
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo(), int32 Level = 1) override;
 };
 
 
@@ -81,47 +136,30 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParamDetail_GameplayEffect
 
 // GameplayEffect的SetByCallerModifier设置细节基础结构
 UCLASS(Abstract)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParamDetail_GameplayEffect_SetByCaller
 	: public UTireflyAbilityParamDetail_GameplayEffect
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "Magnitude == nullptr", EditConditionHides, GetOptions = "GetSetByCallerModifierParamNames"))
-	FName MagnitudeName = NAME_None;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "ShouldHideMagnitude", EditConditionHides))
+	// SetByCallerModifier的参数值
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTireflyAbilityParam_Numeric* Magnitude = nullptr;
 
-public:
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
-
-	UFUNCTION()
-	bool ShouldHideMagnitude() const { return MagnitudeName == NAME_None; }
-
-	UFUNCTION()
-	TArray<FName> GetSetByCallerModifierParamNames() const;
-	
+public:	
 	// 为GameplayEffectSpec修改或添加SetByCallerModifier
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = GameplayEffect, Meta = (ForceAsFunction))
-	void AssignSetByCallerModifier(UPARAM(ref)FGameplayEffectSpecHandle& Spec,
-		UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1);
+	void AssignSetByCallerModifier(UPARAM(ref)FGameplayEffectSpecHandle& EffectSpecHandle,
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo());
 	virtual void AssignSetByCallerModifier_Implementation(UPARAM(ref)FGameplayEffectSpecHandle& EffectSpecHandle,
-		UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) {}
-
-	UTireflyAbilityParam_Numeric* GetMagnitude() const;
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) {}
 };
+
 
 // GameplayEffect的TagSetByCaller设置细节
 UCLASS(DisplayName = "Tag Set By Caller")
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParamDetail_GameplayEffect_TagSetByCaller
-	: public UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier
+	: public UTireflyAbilityParamDetail_GameplayEffect_SetByCaller
 {
 	GENERATED_BODY()
 
@@ -132,15 +170,14 @@ public:
 public:
 	// 为GameplayEffectSpec修改或添加SetByCallerModifier
 	virtual void AssignSetByCallerModifier_Implementation(UPARAM(ref)FGameplayEffectSpecHandle& EffectSpecHandle,
-		UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) override;
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) override;
 };
+
 
 // GameplayEffect的TagSetByCaller设置细节
 UCLASS(DisplayName = "Name Set By Caller")
 class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParamDetail_GameplayEffect_NameSetByCaller
-	: public UTireflyAbilityParamDetail_GameplayEffect_SetByCallerModifier
+	: public UTireflyAbilityParamDetail_GameplayEffect_SetByCaller
 {
 	GENERATED_BODY()
 
@@ -151,9 +188,7 @@ public:
 public:
 	// 为GameplayEffectSpec修改或添加SetByCallerModifier
 	virtual void AssignSetByCallerModifier_Implementation(UPARAM(ref)FGameplayEffectSpecHandle& EffectSpecHandle,
-		UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) override;
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) override;
 };
 
 #pragma endregion
@@ -172,13 +207,9 @@ public:
 	// 修改GameplayEffectContext
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = GameplayEffect, Meta = (ForceAsFunction))
 	void ModifyGameplayEffectContext(UPARAM(ref)FGameplayEffectContextHandle& Context,
-		UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1);
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo());
 	virtual void ModifyGameplayEffectContext_Implementation(UPARAM(ref)FGameplayEffectContextHandle& Context,
-		UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) {}
+		FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) {}
 };
 
 #pragma endregion

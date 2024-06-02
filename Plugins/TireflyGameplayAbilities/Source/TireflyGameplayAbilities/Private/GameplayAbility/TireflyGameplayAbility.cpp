@@ -54,6 +54,22 @@ TArray<FName> UTireflyGameplayAbility::GetAbilityParamOptions() const
 	return OutOptions;
 }
 
+FTireflyAbilityParamInfo UTireflyGameplayAbility::GetAbilityParamInfo() const
+{
+	return FTireflyAbilityParamInfo(Cast<UTireflyAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()),
+		nullptr, GetCurrentAbilitySpecHandle());
+}
+
+int32 UTireflyGameplayAbility::GetCasterLevel() const
+{
+	if (auto ASC = Cast<UTireflyAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()))
+	{
+		return ASC->GetAbilityCasterLevel();
+	}
+
+	return 1;
+}
+
 const FGameplayTagContainer* UTireflyGameplayAbility::GetCooldownTags() const
 {
 	if (AbilityAsset)
@@ -130,13 +146,9 @@ float UTireflyGameplayAbility::GetCooldownDuration_Implementation() const
 		return 0.f;
 	}
 
-	if (AbilityAsset)
+	if (AbilityAsset && AbilityAsset->CooldownTime)
 	{
-		if (AbilityAsset->CooldownTime)
-		{
-			return AbilityAsset->CooldownTime->GetCooldownDuration(TireflyASC,
-				nullptr, GetCurrentAbilitySpecHandle(), GetAbilityLevel());
-		}
+		return AbilityAsset->CooldownTime->GetCooldownDuration(GetAbilityParamInfo());
 	}
 
 	return 0.f;
@@ -151,7 +163,7 @@ UGameplayEffect* UTireflyGameplayAbility::GetCostGameplayEffect() const
 
 	if (IsValid(AbilityAsset))
 	{
-		if (!AbilityAsset->CostSettings.IsEmpty())
+		if (!AbilityAsset->CostSetting)
 		{
 			return UTireflyGameplayEffect_GenericCost::StaticClass()->GetDefaultObject<UGameplayEffect>();
 		}
@@ -168,8 +180,8 @@ bool UTireflyGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,
 		return Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags);
 	}
 
-	TArray<UTireflyAbilityParam_CostBase*> CostSettings = GetCostSettings();
-	if (CostSettings.IsEmpty())
+	UTireflyAbilityParam_CostBase* CostSetting = GetCostSetting();
+	if (!CostSetting)
 	{
 		return Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags);
 	}
@@ -180,12 +192,9 @@ bool UTireflyGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,
 		return Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags);
 	}
 
-	for (auto CostSetting : CostSettings)
+	if (!CostSetting->CheckCost(GetAbilityParamInfo()))
 	{
-		if (!CostSetting->CheckCost(TireflyASC, nullptr, Handle, GetAbilityLevel()))
-		{
-			return false;
-		}
+		return false;
 	}
 
 	return true;
@@ -216,15 +225,12 @@ void UTireflyGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
 	Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
 }
 
-TArray<UTireflyAbilityParam_CostBase*> UTireflyGameplayAbility::GetCostSettings_Implementation() const
+UTireflyAbilityParam_CostBase* UTireflyGameplayAbility::GetCostSetting_Implementation() const
 {
 	if (IsValid(AbilityAsset))
 	{
-		if (!AbilityAsset->CostSettings.IsEmpty())
-		{
-			return AbilityAsset->CostSettings;
-		}
+		return AbilityAsset->CostSetting;
 	}
 
-	return TArray<UTireflyAbilityParam_CostBase*>{};
+	return nullptr;
 }

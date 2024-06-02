@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "TireflyGameplayAbilityParameter.h"
-#include "GameplayAbilitySpecHandle.h"
 #include "GameplayTagContainer.h"
 #include "TireflyAbilityParam_Cooldown.generated.h"
 
@@ -13,57 +12,51 @@ class UTireflyAbilitySystemComponent;
 class UTireflyAbilityParam_Numeric;
 
 
-// GameplayAbility冷却时间设置的基础结构
+// 处理技能冷却的技能资产元素
 UCLASS(Abstract)
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CooldownBase : public UTireflyGameplayAbilityParameterBase
-{
-	GENERATED_BODY()
-
-public:
-	// 获取冷却时间标签
-	UFUNCTION()
-	virtual const FGameplayTagContainer& GetCooldownTags() const { return FGameplayTagContainer::EmptyContainer; }
-
-	// 获取冷却时间
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability")
-	float GetCooldownDuration(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const;
-	virtual float GetCooldownDuration_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-		const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-		int32 Level = 1) const
-	{
-		return 0.f;
-	}
-
-	virtual bool IsShowcaseTextEditable_Implementation() const override { return false; }
-};
-
-
-// GameplayAbility通用的冷却时间参数
-UCLASS(DisplayName = "Generic Cooldown")
-class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CommonCooldown : public UTireflyAbilityParam_CooldownBase
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_CooldownBase : public UTireflyAbilityAssetElement_DisplayText
 {
 	GENERATED_BODY()
 
 public:
 	// 冷却时间标签
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTagContainer CooldownTags;
 
+public:
+	// 获取冷却时间标签
+	UFUNCTION()
+	const FGameplayTagContainer& GetCooldownTags() const { return CooldownTags; }
+
+	// 获取冷却时间
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Ability|Parameter")
+	float GetCooldownDuration(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const;
+	virtual float GetCooldownDuration_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const
+	{
+		return 0.f;
+	}
+};
+
+
+// GameplayAbility通用的冷却时间设置
+UCLASS(DisplayName = "Generic Cooldown")
+class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GenericCooldown : public UTireflyAbilityParam_CooldownBase
+{
+	GENERATED_BODY()
+
+public:
 	// 冷却时间参数
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTireflyAbilityParam_Numeric* CooldownTime;
 
 public:
-	virtual const FGameplayTagContainer& GetCooldownTags() const override { return CooldownTags; }
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;	
+#endif
 
-	virtual float GetCooldownDuration_Implementation(const UTireflyAbilitySystemComponent* CasterASC = nullptr,
-		const UTireflyAbilitySystemComponent* TargetASC = nullptr,
-	    const FGameplayAbilitySpecHandle AbilityHandle = FGameplayAbilitySpecHandle(),
-	    int32 Level = 1) const override;
+	virtual float GetCooldownDuration_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const override;
 
-	virtual FText GetShowcaseText_Implementation() const override;
+	virtual FText GetDisplayText_Implementation() const override;
+
+	virtual bool IsDisplayTextEditable_Implementation() const override { return false; }
 };

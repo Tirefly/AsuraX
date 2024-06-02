@@ -3,31 +3,32 @@
 
 #include "GameplayAbility/GameplayAbilityParameter/TireflyGameplayAbilityParameter.h"
 
+#include "TireflyAbilitySystemLibrary.h"
 #include "GameplayAbility/TireflyGameplayAbilityAsset.h"
+#include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_GameplayEffect.h"
+#include "GameplayAbility/GameplayAbilityParameter/TireflyAbilityParam_Numeric.h"
 
 
-UTireflyGameplayAbilityAsset* TireflyAbilityParameterHelper::GetAbilityAsset(const UObject* InObject)
+FName UTireflyAbilityAssetElement::GetParameterName() const
 {
-	UTireflyGameplayAbilityAsset* OuterAsset = nullptr;
-	UObject* Outer = InObject->GetOuter();
-
-	while (Outer)
+	if (const UTireflyGameplayAbilityAsset* AbilityAsset = UTireflyAbilitySystemLibrary::GetAbilityAsset(this))
 	{
-		if (Outer->IsA<UTireflyGameplayAbilityAsset>())
+		for (const auto& Param : AbilityAsset->AbilityParameters)
 		{
-			OuterAsset = Cast<UTireflyGameplayAbilityAsset>(Outer);
-			break;
+			if (Param.Value == this)
+			{
+				return Param.Key;
+			}
 		}
-		Outer = Outer->GetOuter();
 	}
-	
-	return OuterAsset;
+
+	return NAME_None;
 }
 
-TArray<FName> UTireflyGameplayAbilityParameterBase::GetAbilityParamOptions_Implementation() const
+TArray<FName> UTireflyAbilityAssetElement::GetOtherParameters() const
 {
 	TArray<FName> OutOptions;
-	if (const UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this))
+	if (const UTireflyGameplayAbilityAsset* AbilityAsset = UTireflyAbilitySystemLibrary::GetAbilityAsset(this))
 	{
 		for (const auto& Param : AbilityAsset->AbilityParameters)
 		{
@@ -43,29 +44,53 @@ TArray<FName> UTireflyGameplayAbilityParameterBase::GetAbilityParamOptions_Imple
 	return OutOptions;
 }
 
-FName UTireflyGameplayAbilityParameterBase::GetAbilityParameterName() const
+TArray<FName> UTireflyAbilityAssetElement::GetOtherNumericParameters() const
 {
-	if (const UTireflyGameplayAbilityAsset* AbilityAsset = TireflyAbilityParameterHelper::GetAbilityAsset(this))
+	TArray<FName> OutOptions;
+	if (const UTireflyGameplayAbilityAsset* AbilityAsset = UTireflyAbilitySystemLibrary::GetAbilityAsset(this))
 	{
 		for (const auto& Param : AbilityAsset->AbilityParameters)
 		{
-			if (Param.Value == this)
+			if (Param.Value == this || Param.Value == nullptr)
 			{
-				return Param.Key;
+				continue;
+			}
+
+			if (Param.Value->IsA(UTireflyAbilityParam_Numeric::StaticClass()))
+			{
+				OutOptions.Add(Param.Key);
 			}
 		}
 	}
-
-	return NAME_None;
+	
+	return OutOptions;
 }
 
-TArray<FName> UTireflyGameplayAbilityParameterDetail::GetAbilityParamOptions_Implementation() const
+TArray<FName> UTireflyAbilityAssetElement::GetOtherGameplayEffectParameters() const
 {
 	TArray<FName> OutOptions;
-	if (const UTireflyGameplayAbilityParameter* Param = Cast<UTireflyGameplayAbilityParameter>(GetOuter()))
+	if (const UTireflyGameplayAbilityAsset* AbilityAsset = UTireflyAbilitySystemLibrary::GetAbilityAsset(this))
 	{
-		OutOptions = Param->GetAbilityParamOptions();
-	}
+		for (const auto& Param : AbilityAsset->AbilityParameters)
+		{
+			if (Param.Value == this || Param.Value == nullptr)
+			{
+				continue;
+			}
 
+			if (Param.Value->IsA(UTireflyAbilityParam_GameplayEffectBase::StaticClass()))
+			{
+				OutOptions.Add(Param.Key);
+			}
+		}
+	}
+	
 	return OutOptions;
+}
+
+void UTireflyAbilityAssetElement::PostInitProperties()
+{
+	UObject::PostInitProperties();
+
+	K2_PostInitProperties();
 }
