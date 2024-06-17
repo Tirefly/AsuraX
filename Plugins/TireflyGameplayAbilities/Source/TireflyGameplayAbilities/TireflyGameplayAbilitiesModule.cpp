@@ -4,12 +4,15 @@
 
 #include "AbilitySystemGlobals.h"
 #include "AbilitySystemLog.h"
+#include "GameplayTagsManager.h"
 
 #define LOCTEXT_NAMESPACE "FTireflyGameplayAbilitiesModule"
 
 void FTireflyGameplayAbilitiesModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+
+	UGameplayTagsManager::Get().AddTagIniSearchPath(FPaths::ProjectPluginsDir() / TEXT("TireflyGameplayAbilities/Config"));
 }
 
 void FTireflyGameplayAbilitiesModule::ShutdownModule()

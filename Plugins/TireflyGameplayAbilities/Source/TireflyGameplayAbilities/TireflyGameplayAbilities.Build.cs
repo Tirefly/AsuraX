@@ -38,6 +38,8 @@ public class TireflyGameplayAbilities : ModuleRules
 		PrivateDependencyModuleNames.Add("GameplayTags");
 		PrivateDependencyModuleNames.Add("EnhancedInput");
 		PrivateDependencyModuleNames.Add("DeveloperSettings");
+		PrivateDependencyModuleNames.Add("StateTreeModule");
+		PrivateDependencyModuleNames.Add("GameplayStateTreeModule");
 		PrivateDependencyModuleNames.Add("StructUtils");
 		PrivateDependencyModuleNames.Add("NetCore");
 		

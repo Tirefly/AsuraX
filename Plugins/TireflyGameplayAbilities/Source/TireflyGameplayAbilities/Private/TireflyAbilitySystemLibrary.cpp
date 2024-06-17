@@ -126,6 +126,18 @@ UTireflyGameplayAbilityParameter* UTireflyAbilitySystemLibrary::GetAbilityParamO
 	return OutParameter;
 }
 
+TSubclassOf<UGameplayAbility> UTireflyAbilitySystemLibrary::GetAbilityClassByHandle(const UAbilitySystemComponent* ASC,
+	const FGameplayAbilitySpecHandle& Handle)
+{
+	if (!ASC || !Handle.IsValid())
+	{
+		return nullptr;
+	}
+
+	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromHandle(Handle);
+	return Spec ? Spec->Ability.GetClass() : nullptr;
+}
+
 bool UTireflyAbilitySystemLibrary::GetAttributeValueInRange(const AActor* Actor,
 	FGameplayAttribute Attribute, float ValueToClamp, float& NewValue, FVector2D& OutRange)
 {

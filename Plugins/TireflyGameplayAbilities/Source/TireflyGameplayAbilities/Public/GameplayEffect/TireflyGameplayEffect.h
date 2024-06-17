@@ -34,7 +34,6 @@ public:
 	UTireflyGameplayEffect(const FObjectInitializer& ObjectInitializer);
 
 #if WITH_EDITOR
-	/** UObject interface */
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
@@ -44,9 +43,9 @@ public:
 #pragma region GameplayEffect_SetByCaller
 
 protected:
-	void ProcessDurationSetByCaller();
+	bool ProcessDurationSetByCaller();
 	
-	void ProcessModiferSetByCaller();
+	bool ProcessModiferSetByCaller();
 
 #pragma endregion
 };

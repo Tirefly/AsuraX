@@ -18,21 +18,27 @@ void UTireflyGameplayEffect::PostEditChangeProperty(FPropertyChangedEvent& Prope
 
 	if (PropertyChangedEvent.MemberProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UGameplayEffect, DurationMagnitude))
 	{
-		ProcessDurationSetByCaller();
+		if (ProcessDurationSetByCaller())
+		{
+			MarkPackageDirty();
+		}
 	}
 	else if (PropertyChangedEvent.MemberProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UGameplayEffect, Modifiers))
 	{
-		ProcessModiferSetByCaller();
+		if (ProcessModiferSetByCaller())
+		{
+			MarkPackageDirty();
+		}
 	}
 }
 
-void UTireflyGameplayEffect::ProcessDurationSetByCaller()
+bool UTireflyGameplayEffect::ProcessDurationSetByCaller()
 {
 	const UTireflyAbilitySystemSettings* SettingsGAS = GetDefault<UTireflyAbilitySystemSettings>();
 	const UGameplayTagsManager* TagManager = &UGameplayTagsManager::Get();
 	if (!IsValid(SettingsGAS) || !IsValid(TagManager))
 	{
-		return;
+		return false;
 	}
 
 	FGameplayTag DurationTag = SettingsGAS->GetGenericDurationSetByCallerTag();
@@ -40,22 +46,25 @@ void UTireflyGameplayEffect::ProcessDurationSetByCaller()
 		DurationPolicy != EGameplayEffectDurationType::HasDuration ||
 		DurationMagnitude.GetMagnitudeCalculationType() != EGameplayEffectMagnitudeCalculation::SetByCaller)
 	{
-		return;
+		return false;
 	}
 
 	FSetByCallerFloat SetByCaller;
     SetByCaller.DataTag = DurationTag;
     DurationMagnitude = FGameplayEffectModifierMagnitude(SetByCaller);
+
+	return true;
 }
 
-void UTireflyGameplayEffect::ProcessModiferSetByCaller()
+bool UTireflyGameplayEffect::ProcessModiferSetByCaller()
 {
 	const UTireflyAbilitySystemSettings* SettingsGAS = GetDefault<UTireflyAbilitySystemSettings>();
 	if (!IsValid(SettingsGAS))
 	{
-		return;
+		return false;
 	}
-	
+
+	bool bModified = false;
 	for (auto& Modifier : Modifiers)
 	{
 		const FTireflySetByCallerTagConfig* Config = SettingsGAS->GetSetByCallerTagConfig(Modifier.Attribute);
@@ -67,5 +76,8 @@ void UTireflyGameplayEffect::ProcessModiferSetByCaller()
 		FSetByCallerFloat SetByCaller;
 		SetByCaller.DataTag = Config->SetByCallerTag;
 		Modifier.ModifierMagnitude = FGameplayEffectModifierMagnitude(SetByCaller);
+		bModified = true;
 	}
+
+	return bModified;
 }

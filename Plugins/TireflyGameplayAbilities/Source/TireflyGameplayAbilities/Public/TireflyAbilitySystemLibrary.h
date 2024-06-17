@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "GameplayEffectTypes.h"
 #include "TireflyAbilitySystemLibrary.generated.h"
 
@@ -34,7 +35,7 @@ public:
 
 public:
 	// 获取Object作为Outer（或者Outermost）的AbilityAsset
-	UFUNCTION(BlueprintPure, Category = "Ability|Parameter")
+	UFUNCTION(BlueprintPure, Category = "Ability")
 	static UTireflyGameplayAbilityAsset* GetAbilityAsset(const UObject* InObject);
 	
 	// 根据AbilityRef获取指定的AbilityAsset参数（纯函数）
@@ -68,6 +69,16 @@ public:
 	// 根据AssetPak获取指定的AbilityAsset参数（执行函数）
 	UFUNCTION(BlueprintCallable, BlueprintInternalUseOnly, Category = "Ability")
 	static UTireflyGameplayAbilityParameter* GetAbilityParamOfAssetPak(FString AssetPak, FName Parameter, bool& Success);
+
+#pragma endregion
+
+
+#pragma region GameplayAbility
+
+public:
+	// 根据Ability细则的句柄获取Ability的类
+	UFUNCTION(BlueprintPure, Category = "Ability")
+	static TSubclassOf<UGameplayAbility> GetAbilityClassByHandle(const UAbilitySystemComponent* ASC, const FGameplayAbilitySpecHandle& Handle);
 
 #pragma endregion
 

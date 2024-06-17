@@ -23,27 +23,16 @@ public class TireflyObjectPool : ModuleRules
 			);
 			
 		
-		PublicDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"Core",
-				// ... add other public dependencies that you statically link with here ...
-			}
-			);
-			
-		
-		PrivateDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"CoreUObject",
-				"Engine",
-				"Slate",
-				"SlateCore",
-				"AIModule",
-                "Niagara",
-				// ... add private dependencies that you statically link with here ...	
-			}
-			);
+		PublicDependencyModuleNames.Add("Core");
+
+
+		PrivateDependencyModuleNames.Add("CoreUObject");
+		PrivateDependencyModuleNames.Add("Engine");
+		PrivateDependencyModuleNames.Add("Slate");
+		PrivateDependencyModuleNames.Add("SlateCore");
+		PrivateDependencyModuleNames.Add("GameplayTags");
+		PrivateDependencyModuleNames.Add("AIModule");
+		PrivateDependencyModuleNames.Add("Niagara");
 		
 		
 		DynamicallyLoadedModuleNames.AddRange(
