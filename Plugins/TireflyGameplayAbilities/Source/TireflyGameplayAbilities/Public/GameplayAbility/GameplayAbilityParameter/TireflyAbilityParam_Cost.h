@@ -61,8 +61,8 @@ public:
 	TEnumAsByte<EGameplayModOp::Type> ModifierOp = EGameplayModOp::Additive;
 
 	// 花费的值
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTireflyAbilityParam_Numeric* CostValue = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	TObjectPtr<UTireflyAbilityParam_Numeric> CostValue = nullptr;
 
 public:	
 	virtual FGameplayAttribute GetCostAttribute() const override { return Attribute; }

@@ -19,20 +19,20 @@ public:
 	TSoftClassPtr<AActor> ActorClass;
 
 	// Actor生成时位置
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UTireflyAbilityAssetElement_ActorSpawnTransform* SpawnTransform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	TObjectPtr<class UTireflyAbilityAssetElement_ActorSpawnTransform> SpawnTransform;
 
 	// Actor生成时附加规则
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UTireflyAbilityAssetElement_ActorAttachment* AttachmentRule;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	TObjectPtr<class UTireflyAbilityAssetElement_ActorAttachment> AttachmentRule;
 
 	// Actor生成时碰撞处理方式
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESpawnActorCollisionHandlingMethod SpawnCollisionHandling = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	// Actor生成时附加的细节
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<class UTireflyAbilityParamDetail_ActorSpawn*> SpawnDetails;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	TArray<TObjectPtr<class UTireflyAbilityParamDetail_ActorSpawn>> SpawnDetails;
 
 public:
 	// 执行生成Actor

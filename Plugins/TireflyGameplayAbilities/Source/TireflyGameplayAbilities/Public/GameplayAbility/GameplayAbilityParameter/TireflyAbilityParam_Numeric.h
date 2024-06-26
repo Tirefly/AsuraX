@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TireflyGameplayAbilityParameter.h"
-#include "Abilities/GameplayAbilityTargetTypes.h"
+#include "AttributeSet.h"
 #include "TireflyAbilityParam_Numeric.generated.h"
 
 
@@ -231,8 +231,8 @@ public:
 	FString MathExpression;
 
 	// 作为参数的数学表达式变量数组
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<FString, UTireflyAbilityParam_ExpressionVariable*> ExpressionVariables;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	TMap<FString, TObjectPtr<UTireflyAbilityParam_ExpressionVariable>> ExpressionVariables;
 
 public:
 	virtual float GetParamValue_Implementation(FTireflyAbilityParamInfo ParamInfo = FTireflyAbilityParamInfo()) const override;

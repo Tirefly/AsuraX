@@ -31,7 +31,7 @@ void UTireflyExecCalc_AbilityCost::Execute_Implementation(
 		return;
 	}
 
-	if (UTireflyAbilityParam_CostBase* FinalCostSetting = TireflyGA->GetCostSetting())
+	if (const UTireflyAbilityParam_CostBase* FinalCostSetting = TireflyGA->GetCostSetting())
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(FinalCostSetting->GetCostAttribute(),
 			FinalCostSetting->GetModifierOp(), FinalCostSetting->GetCostValue(TireflyGA->GetAbilityParamInfo())));

@@ -57,8 +57,8 @@ public:
 	TSoftObjectPtr<UTexture2D> AbilityIcon;
 
 	// 能力的描述
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbilityBasics)
-	class UTireflyAbilityParam_DescriptionBase* AbilityDescription = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = AbilityBasics)
+	TObjectPtr<class UTireflyAbilityParam_DescriptionBase> AbilityDescription = nullptr;
 
 #pragma endregion
 
@@ -67,12 +67,12 @@ public:
 
 public:
 	// 能力的冷却时间
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbiliytCommitment)
-	class UTireflyAbilityParam_CooldownBase* CooldownTime = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = AbiliytCommitment)
+	TObjectPtr<class UTireflyAbilityParam_CooldownBase> CooldownTime = nullptr;
 
 	// 能力的花费设置
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbiliytCommitment)
-	class UTireflyAbilityParam_CostBase* CostSetting = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = AbiliytCommitment)
+	TObjectPtr<class UTireflyAbilityParam_CostBase> CostSetting = nullptr;
 
 #pragma endregion
 
@@ -81,8 +81,8 @@ public:
 
 public:
 	// 能力的参数设置
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AbilityParameters)
-	TMap<FName, class UTireflyGameplayAbilityParameter*> AbilityParameters;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced, Category = AbilityParameters)
+	TMap<FName, TObjectPtr<class UTireflyGameplayAbilityParameter>> AbilityParameters;
 
 #pragma endregion
 };

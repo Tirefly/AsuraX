@@ -47,24 +47,24 @@ public:
 	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
 
 	// GameplayEffect的持续时间
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "IsEffectHasDuration", EditConditionHides))
-	UTireflyAbilityParam_Numeric* DurationTime = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced, Meta = (EditCondition = "IsEffectHasDuration", EditConditionHides))
+	TObjectPtr<UTireflyAbilityParam_Numeric> DurationTime = nullptr;
 
 	// GameplayEffect的周期间隔
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "IsEffectNotInstant", EditConditionHides))
-	UTireflyAbilityParam_Numeric* PeriodTime = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced, Meta = (EditCondition = "IsEffectNotInstant", EditConditionHides))
+	TObjectPtr<UTireflyAbilityParam_Numeric> PeriodTime = nullptr;
 
 	// GameplayEffect的单次堆叠应用
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (EditCondition = "IsEffectNotInstant", EditConditionHides))
-	UTireflyAbilityParam_Numeric* StackToApply = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced, Meta = (EditCondition = "IsEffectNotInstant", EditConditionHides))
+	TObjectPtr<UTireflyAbilityParam_Numeric> StackToApply = nullptr;
 
 	// GameplayEffect的SetByCallerModifier
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<class UTireflyAbilityParamDetail_GameplayEffect_SetByCaller*> SetByCallers;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
+	TArray<TObjectPtr<class UTireflyAbilityParamDetail_GameplayEffect_SetByCaller>> SetByCallers;
 
 	// GameplayEffect的ContextSetting
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<class UTireflyAbilityParamDetail_GameplayEffect_ContextSetting*> ContextSettings;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Instanced)
+	TArray<TObjectPtr<class UTireflyAbilityParamDetail_GameplayEffect_ContextSetting>> ContextSettings;
 
 public:
 #if WITH_EDITOR
@@ -92,11 +92,11 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GameplayEffectInstance
 public:
 	// 能力的冷却时间
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UTireflyGameplayEffect* GameplayEffect = nullptr;
+	TObjectPtr<class UTireflyGameplayEffect> GameplayEffect = nullptr;
 
 	// GameplayEffect的ContextSetting
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<class UTireflyAbilityParamDetail_GameplayEffect_ContextSetting*> ContextSettings;
+	TArray<TObjectPtr<class UTireflyAbilityParamDetail_GameplayEffect_ContextSetting>> ContextSettings;
 
 public:
 	// 创建GameplayEffectSpec
@@ -143,8 +143,8 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParamDetail_GameplayEffect_Set
 
 public:
 	// SetByCallerModifier的参数值
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTireflyAbilityParam_Numeric* Magnitude = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	TObjectPtr<UTireflyAbilityParam_Numeric> Magnitude = nullptr;
 
 public:	
 	// 为GameplayEffectSpec修改或添加SetByCallerModifier

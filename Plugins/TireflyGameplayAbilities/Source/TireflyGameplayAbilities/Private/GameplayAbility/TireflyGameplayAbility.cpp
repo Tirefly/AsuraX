@@ -180,7 +180,7 @@ bool UTireflyGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,
 		return Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags);
 	}
 
-	UTireflyAbilityParam_CostBase* CostSetting = GetCostSetting();
+	const UTireflyAbilityParam_CostBase* CostSetting = GetCostSetting();
 	if (!CostSetting)
 	{
 		return Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags);
@@ -225,7 +225,7 @@ void UTireflyGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
 	Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
 }
 
-UTireflyAbilityParam_CostBase* UTireflyGameplayAbility::GetCostSetting_Implementation() const
+const UTireflyAbilityParam_CostBase* UTireflyGameplayAbility::GetCostSetting_Implementation() const
 {
 	if (IsValid(AbilityAsset))
 	{

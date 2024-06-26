@@ -46,8 +46,8 @@ class TIREFLYGAMEPLAYABILITIES_API UTireflyAbilityParam_GenericCooldown : public
 
 public:
 	// 冷却时间参数
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTireflyAbilityParam_Numeric* CooldownTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	TObjectPtr<UTireflyAbilityParam_Numeric> CooldownTime;
 
 public:
 #if WITH_EDITOR

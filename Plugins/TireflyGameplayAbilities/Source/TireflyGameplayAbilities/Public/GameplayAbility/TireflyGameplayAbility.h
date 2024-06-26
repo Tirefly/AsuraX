@@ -140,8 +140,8 @@ public:
 
 	// 允许在应用能力属性消耗之前执行一次属性消耗的计算
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = Costs)
-	UTireflyAbilityParam_CostBase* GetCostSetting() const;
-	virtual UTireflyAbilityParam_CostBase* GetCostSetting_Implementation() const;
+	const UTireflyAbilityParam_CostBase* GetCostSetting() const;
+	virtual const UTireflyAbilityParam_CostBase* GetCostSetting_Implementation() const;
 
 #pragma endregion
 };
